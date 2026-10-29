@@ -143,6 +143,12 @@ h2 { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(2.4
 }
 .hud span { background: #fbfaf5; color: #16161a; border: 2px solid #16161a; box-shadow: 0 0 0 2px #fbfaf5; padding: 7px 10px; border-radius: 4px; }
 .hud b { color: #d6401a; }
+.snd {
+  position: absolute; top: 10px; right: 10px; z-index: 2; cursor: pointer;
+  background: #fbfaf5; color: #16161a; border: 2px solid #16161a; box-shadow: 0 0 0 2px #fbfaf5;
+  padding: 6px 10px; border-radius: 4px; font: 700 0.8125rem/1 var(--font-body);
+}
+.snd[aria-pressed="true"] { color: #8a8a90; text-decoration: line-through; }
 .enter {
   position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; text-align: center;
   background: rgba(10, 12, 16, 0.55); color: #fff; border: 0; width: 100%; cursor: pointer;
@@ -384,7 +390,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         <canvas id="cv"></canvas>
         <div class="hud"><span>주민 <b id="hud-n">0</b> / <span id="hud-cap" style="all:unset">30</span></span><span id="hud-me">손님으로 구경 중</span></div>
         <div class="dlg" id="dlg" aria-live="polite"><span class="who" id="dlg-who"></span><span id="dlg-text"></span><span class="more" id="dlg-more">▼</span></div>
-        <button class="enter" id="enter" type="button">▶ 마을에 들어가기<small>방향키 이동 · Z / 스페이스 말 걸기</small></button>
+        <button class="snd" id="snd" type="button" aria-pressed="false">♪ 음악</button>
+        <button class="enter" id="enter" type="button">▶ 마을에 들어가기<small>방향키 이동 · Z / 스페이스 말 걸기 · ♪ 소리 있음</small></button>
       </div>
       <div class="pad" aria-hidden="true">
         <div class="dpad">
@@ -884,6 +891,107 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   resize();
   requestAnimationFrame(loop);
 
+  // ───── Chiptune: an original looping town theme synthesized with Web Audio ─────
+  const music = (() => {
+    const MUTE_KEY = "pgr21-ai4-mute";
+    let ac = null, master = null, noise = null, timer = null, step = 0, nextT = 0, playing = false;
+    let muted = false;
+    try { muted = localStorage.getItem(MUTE_KEY) === "1"; } catch {}
+    const STEP = 60 / 132 / 2; // 8분음표, 132 BPM
+    const SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+    const hz = (n) => { const m = /^([A-G])(#?)(\d)$/.exec(n); return 440 * 2 ** ((SEMI[m[1]] + (m[2] ? 1 : 0) + (Number(m[3]) + 1) * 12 - 69) / 12); };
+    // 마디당 8칸: 음 이름, "-" 앞 음 유지, "." 쉼표
+    const LEAD = [
+      "E5 - G5 - C6 - B5 A5", "G5 - E5 - A4 - . C5", "D5 - F5 - A5 - G5 F5", "E5 - D5 - G4 - - .",
+      "E5 - G5 - C6 - D6 E6", "D6 - B5 - G5 - - E5", "F5 - A5 - D5 - G5 B5", "C6 - - - . G5 E5 G5",
+    ].join(" ").split(" ");
+    const CHORDS = ["C4 E4 G4", "A3 C4 E4", "F3 A3 C4", "G3 B3 D4", "C4 E4 G4", "E3 G3 B3", "F3 A3 C4|G3 B3 D4", "C4 E4 G4"];
+    const BASS = ["C3", "A2", "F2", "G2", "C3", "E2", "F2|G2", "C3"];
+
+    function tone(type, f, t, dur, vol, slideTo) {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+      g.gain.setValueAtTime(vol, t);
+      g.gain.linearRampToValueAtTime(vol * 0.6, t + dur * 0.7);
+      g.gain.linearRampToValueAtTime(0, t + dur);
+      o.connect(g).connect(master); o.start(t); o.stop(t + dur + 0.02);
+    }
+    function hiss(t, dur, vol, ftype, freq) {
+      const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain();
+      s.buffer = noise; fl.type = ftype; fl.frequency.value = freq;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      s.connect(fl).connect(g).connect(master); s.start(t, Math.random() * 0.5); s.stop(t + dur);
+    }
+    function play(i, t) {
+      const bar = i >> 3, s = i & 7;
+      const tok = LEAD[i];
+      if (tok !== "-" && tok !== ".") {
+        let hold = 1;
+        while (LEAD[(i + hold) % LEAD.length] === "-") hold++;
+        tone("square", hz(tok), t, hold * STEP * 0.92, 0.06);
+      }
+      const half = (str) => { const p = str.split("|"); return p[s < 4 ? 0 : p.length - 1]; };
+      const chord = half(CHORDS[bar]).split(" ");
+      tone("square", hz(chord[s % 3]), t, STEP * 0.45, 0.022);
+      const root = hz(half(BASS[bar]));
+      tone("triangle", s % 2 ? root * 2 : root, t, STEP * 0.85, 0.16);
+      if (s === 0 || s === 4) tone("triangle", 150, t, 0.11, 0.3, 40);
+      if (s === 2 || s === 6) hiss(t, 0.09, 0.12, "bandpass", 1800);
+      hiss(t, 0.025, 0.03, "highpass", 7000);
+    }
+    function schedule() {
+      while (nextT < ac.currentTime + 0.12) { play(step, nextT); nextT += STEP; step = (step + 1) % LEAD.length; }
+    }
+    function init() {
+      if (ac) return true;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      ac = new AC();
+      master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+      noise = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+      const d = noise.getChannelData(0);
+      for (let k = 0; k < d.length; k++) d[k] = Math.random() * 2 - 1;
+      return true;
+    }
+    return {
+      get muted() { return muted; },
+      start() {
+        playing = true;
+        if (muted || timer || !init()) return;
+        ac.resume();
+        master.gain.setTargetAtTime(0.45, ac.currentTime, 0.05);
+        nextT = ac.currentTime + 0.05;
+        timer = setInterval(schedule, 25);
+      },
+      stop(keepIntent) {
+        if (!keepIntent) playing = false;
+        if (!timer) return;
+        clearInterval(timer); timer = null;
+        master.gain.setTargetAtTime(0, ac.currentTime, 0.08);
+      },
+      toggle() {
+        muted = !muted;
+        try { localStorage.setItem(MUTE_KEY, muted ? "1" : "0"); } catch {}
+        if (muted) this.stop(true); else if (playing) this.start();
+        return muted;
+      },
+      blip(f = 988) {
+        if (muted || !ac) return;
+        const t = ac.currentTime;
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = "square"; o.frequency.setValueAtTime(f, t); o.frequency.setValueAtTime(f * 1.5, t + 0.04);
+        g.gain.setValueAtTime(0.05, t); g.gain.linearRampToValueAtTime(0, t + 0.09);
+        o.connect(g).connect(ac.destination); o.start(t); o.stop(t + 0.1);
+      },
+    };
+  })();
+  const snd = $("snd");
+  const paintSnd = () => { snd.setAttribute("aria-pressed", String(music.muted)); snd.textContent = music.muted ? "♪ 음악 꺼짐" : "♪ 음악"; };
+  paintSnd();
+  snd.addEventListener("pointerdown", (ev) => ev.preventDefault()); // 게임 포커스 유지
+  snd.addEventListener("click", () => { music.toggle(); paintSnd(); });
+
   // ───── Dialog box ─────
   let typer = null;
   function openDialog(lines, onClose) { dialog = { lines, i: 0, onClose }; showLine(); }
@@ -914,6 +1022,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   }
 
   function act() {
+    music.blip();
     if (dialog) return advance();
     if (player.moving) return;
     const [dx, dy] = DIRS[player.dir];
@@ -936,8 +1045,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   const KEYS = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right", w: "up", s: "down", a: "left", d: "right", W: "up", S: "down", A: "left", D: "right" };
   function enter() { game.focus(); }
   $("enter").addEventListener("click", enter);
-  game.addEventListener("focus", () => { active = true; game.classList.add("on"); });
-  game.addEventListener("blur", () => { active = false; held = []; game.classList.remove("on"); });
+  game.addEventListener("focus", () => { active = true; game.classList.add("on"); music.start(); });
+  game.addEventListener("blur", () => { active = false; held = []; game.classList.remove("on"); music.stop(); });
   game.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") { game.blur(); return; }
     const d = KEYS[ev.key];

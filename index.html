@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="제4회 PGR21 AI 세미나 · Generation is Done · 2026.11.29 영등포">
+<title>Generation is Done</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Poster layout: full-height hero, ticker, agenda cards, a walkable pixel village of registrants, then sign-up and details. */
+:root {
+  --bg: #ecebe5;
+  --surface: #e1dfd6;
+  --ink: #0d0d0d;
+  --muted: #5d5b55;
+  --line: rgba(13, 13, 13, 0.16);
+  --dot: rgba(13, 13, 13, 0.13);
+  --accent: #ff4a1c;
+  --accent-ink: #0d0d0d;
+  --field: #f7f6f1;
+  --font-kr-display: "Black Han Sans", "Noto Sans KR", sans-serif;
+  --font-num: "Archivo", "Arial Narrow", sans-serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --gutter: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0b0b; --surface: #151514; --ink: #f2f0ea; --muted: #8f8d86;
+    --line: rgba(242, 240, 234, 0.15); --dot: rgba(242, 240, 234, 0.1); --field: #151514;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b0b0b; --surface: #151514; --ink: #f2f0ea; --muted: #8f8d86;
+  --line: rgba(242, 240, 234, 0.15); --dot: rgba(242, 240, 234, 0.1); --field: #151514;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 1rem; line-height: 1.65;
+  word-break: keep-all; overflow-wrap: anywhere; overflow-x: clip;
+}
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter-r); }
+.mono { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ───── Hero poster ───── */
+.poster {
+  min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto;
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
+  background-size: calc(100% / 6) 100%;
+}
+.poster > .wrap { width: 100%; }
+.meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--ink); }
+.meta span { padding: 18px 0; }
+.meta span:nth-child(n+2) { padding-left: 12px; }
+.meta .live { justify-self: end; display: inline-flex; align-items: center; gap: 8px; color: var(--accent); }
+.meta .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+
+.stage {
+  display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 64px); align-items: center; padding-block: clamp(40px, 6vw, 80px);
+}
+.stage > * { min-width: 0; }
+.kicker { display: inline-block; background: var(--accent); color: var(--accent-ink); padding: 4px 10px; margin: 0 0 22px; font-weight: 600; }
+h1 {
+  font-family: var(--font-num); font-weight: 900; font-stretch: 68%;
+  font-size: clamp(4.2rem, 1rem + 11vw, 12.5rem); line-height: 0.84; letter-spacing: -0.02em;
+  text-transform: uppercase; margin: 0;
+}
+h1 .out { color: transparent; -webkit-text-stroke: 2px var(--ink); }
+h1 .acc { color: var(--accent); }
+.lede { max-width: 32em; margin: 30px 0 0; font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem); font-weight: 500; }
+.lede em { font-style: normal; color: var(--accent); font-weight: 900; }
+
+.matrix { width: 100%; height: auto; display: block; }
+.matrix circle { fill: var(--dot); transition: fill .25s; }
+.matrix circle.on { fill: var(--accent); }
+.matrix circle.blink { fill: var(--ink); }
+.matrix-cap { display: flex; justify-content: space-between; margin-top: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); margin: 0; }
+.facts > div { padding: 16px 12px 24px 0; min-width: 0; }
+.facts > div + div { padding-left: 12px; border-left: 1px solid var(--line); }
+.facts dt { color: var(--muted); margin-bottom: 6px; }
+.facts dd { margin: 0; }
+.big {
+  font-family: var(--font-num); font-weight: 800; font-stretch: 72%;
+  font-size: clamp(2.6rem, 1rem + 5vw, 5.6rem); line-height: 0.9; letter-spacing: -0.02em;
+  display: block; font-variant-numeric: tabular-nums;
+}
+.big.kr { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(2.1rem, 0.8rem + 4vw, 4.4rem); letter-spacing: -0.03em; }
+.facts small { display: block; margin-top: 8px; color: var(--muted); font-size: 0.8125rem; line-height: 1.45; }
+
+/* ───── Ticker ───── */
+.ticker { background: var(--accent); color: var(--accent-ink); overflow: hidden; border-block: 1px solid var(--ink); }
+.ticker-track { display: flex; width: max-content; animation: run 40s linear infinite; }
+.ticker-track span {
+  font-family: var(--font-num); font-weight: 800; font-stretch: 75%;
+  font-size: clamp(1.4rem, 1rem + 1.6vw, 2.4rem); text-transform: uppercase; padding: 12px 0; white-space: nowrap;
+}
+.ticker-track span::after { content: "✳"; margin: 0 0.7em; }
+@keyframes run { to { transform: translateX(-50%); } }
+
+/* ───── Sections ───── */
+section { padding-block: clamp(64px, 9vw, 128px); border-bottom: 1px solid var(--line); }
+.sec-top { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: clamp(28px, 4vw, 56px); flex-wrap: wrap; }
+.sec-top .mono { color: var(--accent); }
+h2 { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(2.4rem, 1rem + 5.2vw, 5.8rem); line-height: 1; letter-spacing: -0.03em; margin: 8px 0 0; }
+.side { max-width: 28em; color: var(--muted); margin: 0; }
+
+/* Agenda */
+.qs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); }
+.q { padding: 24px 24px 8px 0; display: grid; gap: 16px; align-content: start; min-width: 0; }
+.q + .q { padding-left: 24px; border-left: 1px solid var(--line); }
+.q .word { font-family: var(--font-num); font-weight: 900; font-stretch: 62%; font-size: clamp(4rem, 2rem + 6vw, 8.5rem); line-height: 0.8; text-transform: uppercase; }
+.q:hover .word { color: var(--accent); }
+.q p { margin: 0; }
+.q .now { color: var(--muted); }
+.q .ask { font-weight: 900; font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem); line-height: 1.35; }
+.thesis { margin: clamp(36px, 5vw, 64px) 0 0; padding-top: 24px; border-top: 1px solid var(--ink); font-family: var(--font-kr-display); font-size: clamp(1.6rem, 1rem + 2.4vw, 3.2rem); line-height: 1.15; letter-spacing: -0.02em; }
+.thesis span { color: var(--accent); }
+
+/* Village */
+.game {
+  position: relative; background: #1a1c22; border: 3px solid var(--ink); outline: none;
+  user-select: none; -webkit-user-select: none; touch-action: none;
+}
+.game:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.game canvas { display: block; width: 100%; image-rendering: pixelated; }
+.hud {
+  position: absolute; top: 10px; left: 10px; display: flex; gap: 8px; flex-wrap: wrap; pointer-events: none;
+  font: 700 0.8125rem/1 var(--font-body);
+}
+.hud span { background: #fbfaf5; color: #16161a; border: 2px solid #16161a; box-shadow: 0 0 0 2px #fbfaf5; padding: 7px 10px; border-radius: 4px; }
+.hud b { color: #d6401a; }
+.enter {
+  position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; text-align: center;
+  background: rgba(10, 12, 16, 0.55); color: #fff; border: 0; width: 100%; cursor: pointer;
+  font: 900 clamp(1.1rem, 1rem + 0.8vw, 1.6rem)/1.3 var(--font-body);
+}
+.enter small { font: 600 0.8125rem/1.4 var(--font-mono); letter-spacing: 0.06em; opacity: 0.8; }
+.game.on .enter { display: none; }
+.dlg {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; display: none;
+  background: #fbfaf5; color: #16161a; border: 3px solid #16161a; border-radius: 8px;
+  box-shadow: inset 0 0 0 3px #fbfaf5, inset 0 0 0 5px #5a6a8a;
+  padding: 16px 44px 18px 20px; min-height: 92px;
+  font: 700 clamp(0.95rem, 0.85rem + 0.5vw, 1.2rem)/1.55 var(--font-body);
+}
+.dlg.show { display: block; }
+.dlg .who { display: block; font-size: 0.8em; color: #d6401a; margin-bottom: 2px; }
+.dlg .more { position: absolute; right: 18px; bottom: 12px; color: #d6401a; animation: nudge .7s steps(2) infinite; }
+@keyframes nudge { 50% { transform: translateY(3px); } }
+.pad { display: none; margin-top: 12px; justify-content: space-between; align-items: center; gap: 16px; }
+.dpad { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(3, 52px); gap: 2px; }
+.pad button {
+  background: var(--ink); color: var(--bg); border: 0; border-radius: 8px;
+  font: 900 1.2rem/1 var(--font-num); touch-action: none; cursor: pointer;
+}
+.dpad [data-dir="up"] { grid-area: 1 / 2; }
+.dpad [data-dir="left"] { grid-area: 2 / 1; }
+.dpad [data-dir="right"] { grid-area: 2 / 3; }
+.dpad [data-dir="down"] { grid-area: 3 / 2; }
+.pad .a { width: 72px; height: 72px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 1.6rem; }
+.keys { margin: 12px 0 0; color: var(--muted); font-size: 0.875rem; }
+.keys kbd { font-family: var(--font-mono); font-size: 0.75rem; border: 1px solid var(--line); border-bottom-width: 2px; padding: 1px 6px; border-radius: 4px; }
+@media (hover: none), (max-width: 760px) { .pad { display: flex; } .keys { display: none; } }
+
+/* Sign-up */
+.signup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.signup > * { min-width: 0; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--ink); }
+.tabs label { cursor: pointer; padding: clamp(18px, 2.4vw, 28px); display: grid; gap: 10px; }
+.tabs label + label { border-left: 1px solid var(--ink); }
+.tabs input { position: absolute; opacity: 0; pointer-events: none; }
+.tabs .word { font-family: var(--font-num); font-weight: 900; font-stretch: 62%; font-size: clamp(3.4rem, 1.6rem + 5vw, 6.5rem); line-height: 0.8; text-transform: uppercase; }
+.tabs b { font-size: 1.05rem; }
+.tabs small { color: var(--muted); font-size: 0.875rem; line-height: 1.5; }
+.tabs label:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
+.tabs label:has(input:checked) small { color: inherit; }
+.tabs label:has(input:focus-visible) { outline: 3px solid var(--ink); outline-offset: -6px; }
+.terms { margin: 20px 0 0; display: grid; border-top: 1px solid var(--line); }
+.terms div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 0.9375rem; }
+.terms dt { color: var(--muted); }
+.terms dd { margin: 0; font-weight: 700; text-align: right; }
+
+form { display: grid; gap: 18px; }
+.field { display: grid; gap: 6px; }
+.field > span { font-weight: 700; font-size: 0.9375rem; }
+.field > span i { font-style: normal; color: var(--muted); font-weight: 400; font-size: 0.8125rem; margin-left: 6px; }
+input[type="text"], input[type="email"], textarea, select {
+  font: 500 1rem/1.5 var(--font-body); color: var(--ink); background: var(--field);
+  border: 1px solid var(--ink); border-radius: 0; padding: 12px 14px; width: 100%;
+}
+textarea { min-height: 110px; resize: vertical; }
+input:focus, textarea:focus, select:focus { outline: 3px solid var(--accent); outline-offset: 0; }
+.talk-only { display: none; gap: 18px; }
+form[data-type="talk"] .talk-only { display: grid; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 0.9375rem; }
+.check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+.notice { border: 2px solid var(--accent); padding: 16px 18px; display: grid; gap: 6px; font-size: 0.9375rem; }
+.notice b { font-weight: 900; }
+.notice p { margin: 0; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.note { font-size: 0.8125rem; color: var(--muted); margin: 0; }
+
+.btn {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%;
+  font: 900 clamp(1.1rem, 1rem + 0.5vw, 1.4rem)/1 var(--font-body);
+  padding: 20px 22px; background: var(--ink); color: var(--bg); border: 1px solid var(--ink); cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn::after { content: "→"; font-family: var(--font-num); font-weight: 800; }
+.btn:hover:not(:disabled) { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--accent); }
+.btn:disabled { background: transparent; color: var(--muted); border-style: dashed; cursor: default; }
+.msg { margin: 0; font-weight: 700; min-height: 1.6em; }
+.msg.err { color: var(--accent); }
+
+.welcome { display: none; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; padding: 20px; border: 1px solid var(--ink); background: var(--surface); }
+.welcome.show { display: grid; }
+.welcome canvas { width: 96px; height: 96px; image-rendering: pixelated; background: #7ccd52; border: 3px solid var(--ink); }
+.welcome p { margin: 0; }
+.welcome .seat { font-family: var(--font-num); font-weight: 900; font-stretch: 70%; font-size: 3rem; line-height: 0.9; color: var(--accent); }
+
+/* Speakers lineup */
+.lineup { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.lineup li {
+  display: grid; grid-template-columns: 3.2em minmax(0, 1fr) auto; gap: 16px; align-items: baseline;
+  padding: clamp(14px, 1.8vw, 22px) 8px; border-bottom: 1px solid var(--line);
+  transition: background .2s, color .2s, padding .2s;
+}
+.lineup li:hover { background: var(--ink); color: var(--bg); padding-left: 20px; }
+.lineup .n { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--accent); }
+.lineup .t { font-weight: 900; font-size: clamp(1.25rem, 0.9rem + 1.6vw, 2.4rem); line-height: 1.2; letter-spacing: -0.02em; }
+.lineup .tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
+.lineup li:hover .tag { color: inherit; }
+.lineup .empty { display: block; color: var(--muted); font-weight: 700; }
+
+/* Steps */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); counter-reset: s; border-top: 1px solid var(--ink); }
+.steps li { counter-increment: s; padding: 20px 20px 8px 0; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.steps li + li { padding-left: 20px; border-left: 1px solid var(--line); }
+.steps li::before {
+  content: counter(s, decimal-leading-zero);
+  font-family: var(--font-num); font-weight: 900; font-stretch: 65%;
+  font-size: clamp(4rem, 2rem + 5vw, 7.5rem); line-height: 0.85;
+  color: transparent; -webkit-text-stroke: 1.5px var(--ink);
+}
+.steps li:hover::before { color: var(--accent); -webkit-text-stroke-color: var(--accent); }
+.steps b { font-family: var(--font-kr-display); font-weight: 400; font-size: 1.8rem; line-height: 1; }
+.steps span { color: var(--muted); font-size: 0.9375rem; }
+
+/* Program */
+.prog { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.prog li { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr); gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.prog time { font-family: var(--font-num); font-weight: 800; font-stretch: 70%; font-size: clamp(2.4rem, 1rem + 4.4vw, 5rem); line-height: 1; color: var(--muted); font-variant-numeric: tabular-nums; }
+.prog li.on time { color: var(--accent); }
+.prog b { display: block; font-weight: 900; font-size: clamp(1.15rem, 1rem + 0.8vw, 1.7rem); }
+.prog span { color: var(--muted); font-size: 0.9375rem; }
+
+/* FAQ */
+.faq { border-top: 1px solid var(--ink); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; list-style: none; padding: 22px 0; font-weight: 900; font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem); display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-family: var(--font-num); font-weight: 800; font-size: 1.6em; line-height: 0.7; color: var(--accent); transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { margin: 0 0 24px; color: var(--muted); max-width: 44em; }
+
+footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
+.outro { font-family: var(--font-num); font-weight: 900; font-stretch: 62%; font-size: clamp(3.4rem, 15.5vw, 15rem); line-height: 0.82; letter-spacing: -0.02em; text-transform: uppercase; margin: 0; }
+.outro span { color: var(--accent); }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--ink); color: var(--muted); font-size: 0.875rem; }
+.foot b { color: var(--ink); }
+
+@media (max-width: 900px) {
+  .stage, .signup { grid-template-columns: minmax(0, 1fr); }
+  .matrix-box { max-width: 420px; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts > div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .facts > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .qs { grid-template-columns: minmax(0, 1fr); }
+  .q + .q { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps li:nth-child(3) { padding-left: 0; border-left: 0; }
+  .steps li:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .meta span:nth-child(3) { padding-left: 0; }
+  .meta span:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+@media (max-width: 520px) {
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .steps li + li { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+  .lineup li { grid-template-columns: 2.4em minmax(0, 1fr); }
+  .lineup .tag { display: none; }
+  .prog li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .tabs { grid-template-columns: minmax(0, 1fr); }
+  .tabs label + label { border-left: 0; border-top: 1px solid var(--ink); }
+  h1 .out { -webkit-text-stroke-width: 1.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track, .meta .live::before, .dlg .more { animation: none; }
+  .btn, .lineup li { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="poster">
+  <div class="wrap meta mono">
+    <span>PGR21</span>
+    <span>AI Seminar</span>
+    <span>Vol.04 / 2026</span>
+    <span class="live" id="live">접수 준비 중</span>
+  </div>
+
+  <div class="wrap stage">
+    <div>
+      <p class="kicker mono">제4회 PGR21 AI 세미나</p>
+      <h1>Generation<br><span class="out">is</span> <span class="acc">Done.</span></h1>
+      <p class="lede">데이터, 아트, 게임. 만드는 일의 장벽이 무너진 세상에서 <em>우리는 무엇을 하고 있고, 무엇을 해야 하는가.</em></p>
+    </div>
+    <div class="matrix-box" aria-hidden="true">
+      <svg class="matrix" id="matrix" viewBox="0 0 130 90"></svg>
+      <div class="matrix-cap mono"><span>Generating</span><span id="pct">0%</span></div>
+    </div>
+  </div>
+
+  <dl class="wrap facts">
+    <div><dt class="mono">Date</dt><dd><span class="big">11.29</span><small>2026 · 일요일</small></dd></div>
+    <div><dt class="mono">Start</dt><dd><span class="big">13:00</span><small>시작 예정</small></dd></div>
+    <div><dt class="mono">Place</dt><dd><span class="big kr">영등포</span><small>영등포역 인근 · 장소 확정 전</small></dd></div>
+    <div><dt class="mono">Seats</dt><dd><span class="big" id="seats">30</span><small id="seats-note">명 내외 · 피자와 음료 제공</small></dd></div>
+  </dl>
+</header>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<main>
+  <section aria-labelledby="agenda-h">
+    <div class="wrap">
+      <div class="sec-top">
+        <div><p class="mono">Main agenda</p><h2 id="agenda-h">세 개의 질문</h2></div>
+        <p class="side">발표와 토론은 이 질문들 위에서 진행합니다. 답을 정해 두지 않았습니다. 각자 자리에서 겪은 것을 가져와 주세요.</p>
+      </div>
+      <div class="qs">
+        <article class="q">
+          <span class="word">Data</span>
+          <p class="now">분석도 시각화도 한 줄 프롬프트가 됐다.</p>
+          <p class="ask">그럼 어떤 질문을 던질지는 누가 정하는가?</p>
+        </article>
+        <article class="q">
+          <span class="word">Art</span>
+          <p class="now">그림, 음악, 영상이 몇 초 만에 나온다.</p>
+          <p class="ask">고르고 버리는 취향도 창작이라 부를 수 있는가?</p>
+        </article>
+        <article class="q">
+          <span class="word">Game</span>
+          <p class="now">코드도, 에셋도, NPC의 대사도 생성된다.</p>
+          <p class="ask">그 안에서 재미는 누가 설계하는가?</p>
+        </article>
+      </div>
+      <p class="thesis">생성은 끝났다. 남은 건 <span>무엇을, 왜</span> 만들지 정하는 일.</p>
+    </div>
+  </section>
+
+  <section id="village" aria-labelledby="village-h">
+    <div class="wrap">
+      <div class="sec-top">
+        <div><p class="mono">Live · 접수자 마을</p><h2 id="village-h">먼저 온 사람들</h2></div>
+        <p class="side">접수 때 적은 한마디를 들고, 운영진 확인을 거쳐 내 아바타가 이 마을에 입주합니다. 걸어 다니며 주민에게 말을 걸어 보세요. 표지판도 읽을 수 있습니다.</p>
+      </div>
+      <div class="game" id="game" tabindex="0" aria-label="접수자 마을. 방향키로 이동하고 Z 또는 스페이스로 말을 겁니다.">
+        <canvas id="cv"></canvas>
+        <div class="hud"><span>주민 <b id="hud-n">0</b> / <span id="hud-cap" style="all:unset">30</span></span><span id="hud-me">손님으로 구경 중</span></div>
+        <div class="dlg" id="dlg" aria-live="polite"><span class="who" id="dlg-who"></span><span id="dlg-text"></span><span class="more" id="dlg-more">▼</span></div>
+        <button class="enter" id="enter" type="button">▶ 마을에 들어가기<small>방향키 이동 · Z / 스페이스 말 걸기</small></button>
+      </div>
+      <div class="pad" aria-hidden="true">
+        <div class="dpad">
+          <button type="button" data-dir="up">▲</button>
+          <button type="button" data-dir="left">◀</button>
+          <button type="button" data-dir="right">▶</button>
+          <button type="button" data-dir="down">▼</button>
+        </div>
+        <button type="button" class="a" id="btn-a">A</button>
+      </div>
+      <p class="keys"><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> 또는 <kbd>WASD</kbd> 이동 · <kbd>Z</kbd> <kbd>Space</kbd> <kbd>Enter</kbd> 말 걸기·다음 · <kbd>Esc</kbd> 나가기</p>
+    </div>
+  </section>
+
+  <section id="join" aria-labelledby="join-h">
+    <div class="wrap">
+      <div class="sec-top">
+        <div><p class="mono">Registration</p><h2 id="join-h">접수처</h2></div>
+        <p class="side" id="api-state">일반 참가와 발표 참가를 나눠 받습니다. 발표 참가자는 따로 참가 신청을 하지 않아도 됩니다.</p>
+      </div>
+      <div class="signup">
+        <div>
+          <div class="tabs" role="radiogroup" aria-label="접수 구분">
+            <label><input type="radio" name="kind" value="join" checked><span class="word" aria-hidden="true">Join</span><b>일반 참가</b><small>듣고, 묻고, 이야기 나누기</small></label>
+            <label><input type="radio" name="kind" value="talk"><span class="word" aria-hidden="true">Talk</span><b>발표 참가</b><small>무대에 서기 · 참가비 면제</small></label>
+          </div>
+          <dl class="terms">
+            <div><dt>대상</dt><dd>PGR21 AI포럼 톡방 멤버</dd></div>
+            <div><dt>그 외 참여</dt><dd>방장에게 별도 문의</dd></div>
+            <div><dt>참가비</dt><dd>20,000~30,000원 예정</dd></div>
+            <div><dt>발표자</dt><dd>확정 시 참가비 면제</dd></div>
+            <div><dt>정원</dt><dd>30명 내외 · 초과 시 대기</dd></div>
+            <div><dt>입금·환불</dt><dd>접수 확인 메일로 안내</dd></div>
+          </dl>
+        </div>
+
+        <div>
+          <form id="form" data-type="join" novalidate>
+            <div class="notice" role="note">
+              <b>PGR21 AI포럼 톡방 멤버 대상 행사입니다.</b>
+              <p>닉네임은 톡방에서 쓰는 아이디와 똑같이 적어 주세요. 톡방 아이디와 일치하지 않으면 등록이 거부될 수 있습니다.</p>
+              <p>톡방 멤버가 아닌 분의 참여는 방장(짬뽕순두부)에게 따로 문의해 주세요.</p>
+            </div>
+            <label class="field"><span>톡방 닉네임<i>PGR21 AI포럼 톡방 아이디와 똑같이 · 마을과 명찰에도 쓰입니다 · 20자</i></span><input type="text" name="nick" maxlength="20" required autocomplete="nickname"></label>
+            <label class="field"><span>이메일<i>운영진만 봅니다 · 수정할 때 같은 이메일로 다시 내면 됩니다</i></span><input type="email" name="email" maxlength="120" required autocomplete="email"></label>
+            <label class="field"><span>한마디<i>마을에서 말을 걸면 내 아바타가 하는 대사 · 40자 · 운영진 확인 후 반영</i></span><input type="text" name="line" maxlength="40" required placeholder="생성은 끝났다. 나는 ___ 를 한다."></label>
+            <div class="talk-only">
+              <label class="field"><span>발표 제목<i>아직 없으면 TBD</i></span><input type="text" name="title" maxlength="80" placeholder="TBD"></label>
+              <label class="field"><span>발표 소개<i>세 질문 중 어디에 닿는지 적어 주면 좋습니다</i></span><textarea name="abstract" maxlength="600"></textarea></label>
+              <label class="field"><span>희망 발표 시간</span>
+                <select name="length"><option>10분</option><option selected>15분</option><option>20분</option><option>상관없음</option></select>
+              </label>
+            </div>
+            <label class="hp" aria-hidden="true">웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+            <label class="check"><input type="checkbox" name="public" checked><span>마을과 발표 목록에 닉네임·한마디·발표 제목을 공개합니다. 끄면 접수만 되고 페이지에는 보이지 않습니다.</span></label>
+            <button class="btn" id="submit" type="submit"><span id="submit-label">일반 참가 접수</span></button>
+            <p class="msg" id="msg" role="status"></p>
+            <div class="welcome" id="welcome"><canvas id="me-face" width="16" height="16"></canvas><div><span class="seat" id="me-seat"></span><p id="me-text"></p></div></div>
+            <p class="note">비밀번호는 받지 않습니다. 이메일은 페이지에 공개되지 않습니다.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="talks-h">
+    <div class="wrap">
+      <div class="sec-top">
+        <div><p class="mono">Call for speakers · live</p><h2 id="talks-h">발표 신청 현황</h2></div>
+        <p class="side">발표 참가로 접수된 세션이 운영진 확인 후 올라옵니다. 순서와 시간은 확정 후 편성합니다.</p>
+      </div>
+      <ol class="lineup" id="talks"><li><span class="empty">첫 번째 발표 신청을 기다리고 있습니다.</span></li></ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="steps-h">
+    <div class="wrap">
+      <div class="sec-top">
+        <div><p class="mono">For speakers</p><h2 id="steps-h">발표자는 이렇게</h2></div>
+        <p class="side">비밀번호는 신청 항목으로 받지 않습니다.</p>
+      </div>
+      <ol class="steps">
+        <li><b>접수</b><span>위 접수처에서 발표 참가로 세션 제목·소개·이메일을 남깁니다.</span></li>
+        <li><b>초대</b><span>운영진 확인 후, 신청한 이메일의 노션 계정으로 본인 발표 페이지 편집 초대를 받습니다.</span></li>
+        <li><b>수정</b><span>초대받은 페이지에서 제목·소개·발표 파일을 언제든 고칩니다.</span></li>
+        <li><b>제출</b><span>마감까지 PDF와 원본·데모 백업을 올립니다. 자료·녹화 공개 여부는 따로 고릅니다.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="prog-h">
+    <div class="wrap">
+      <div class="sec-top">
+        <div><p class="mono">Timetable · 11.29</p><h2 id="prog-h">프로그램</h2></div>
+        <p class="side">발표 자료는 공개에 동의한 최종본만 행사 후 배포합니다.</p>
+      </div>
+      <ol class="prog">
+        <li class="on"><time>13:00</time><div><b>시작</b><span>입장과 인사 · 예정</span></div></li>
+        <li><time>TBA</time><div><b>발표 세션</b><span>데이터 · 아트 · 게임 · 발표자 확정 후 공개</span></div></li>
+        <li><time>TBA</time><div><b>토론 · Generation is Done</b><span>우리는 무엇을 하고 있고, 무엇을 해야 하는가</span></div></li>
+        <li><time>TBA</time><div><b>식사와 마무리</b><span>피자와 음료 · 종료 시각 공지 예정</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="sec-top"><div><p class="mono">FAQ</p><h2 id="faq-h">자주 묻는 질문</h2></div></div>
+      <div class="faq">
+        <details><summary>톡방 멤버가 아닌데 참가할 수 있나요?</summary><p>이번 세미나는 PGR21 AI포럼 톡방 멤버를 대상으로 접수합니다. 그 외 참여를 원하시면 방장(짬뽕순두부)에게 별도로 문의해 주세요.</p></details>
+        <details><summary>닉네임은 아무거나 써도 되나요?</summary><p>아니요. PGR21 AI포럼 톡방에서 쓰는 아이디와 똑같이 적어 주세요. 운영진이 톡방 명단과 대조하며, 일치하지 않으면 등록이 거부될 수 있습니다.</p></details>
+        <details><summary>발표 참가자도 일반 참가를 따로 신청해야 하나요?</summary><p>아니요. 발표 참가 접수가 참가 신청을 겸합니다. 이미 일반 참가로 접수했다면 같은 이메일로 발표 참가를 다시 내면 발표로 바뀝니다.</p></details>
+        <details><summary>접수 내용을 고치고 싶어요.</summary><p>같은 이메일로 다시 접수하면 새로 추가되지 않고 기존 내용이 고쳐집니다. 좌석 번호는 그대로 유지됩니다.</p></details>
+        <details><summary>마을에 내 닉네임이 보이는 게 싫어요.</summary><p>접수할 때 공개 체크를 끄면 접수만 되고 마을과 발표 목록에는 나오지 않습니다. 이미 공개로 냈다면 같은 이메일로 체크를 끄고 다시 내 주세요.</p></details>
+        <details><summary>접수했는데 마을에 제가 안 보여요.</summary><p>마을 입주와 한마디는 운영진이 확인한 뒤에 반영됩니다. 같은 이메일로 닉네임·한마디·발표 제목을 바꿔 다시 내면 다시 확인을 거칩니다.</p></details>
+        <details><summary>아바타는 고를 수 있나요?</summary><p>닉네임에서 자동으로 생성됩니다. 같은 닉네임이면 언제나 같은 모습이 나옵니다. Generation is Done이니까요.</p></details>
+        <details><summary>취소나 문의는 어디로 하나요?</summary><p>문의 채널과 환불 기준은 접수 확인 메일과 이 페이지에 안내합니다.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="outro">See you<br>on <span>11.29</span></p>
+    <div class="foot">
+      <span><b>운영</b> 짬뽕순두부(방장) · Tiny(부방장)</span>
+      <span>일정·장소·금액은 예정이며 확정되는 대로 갱신합니다.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 구글 시트 Apps Script 웹 앱 URL(https://script.google.com/macros/s/.../exec)을 넣으면 접수와 마을이 켜집니다.
+  const API = "";
+  const CAPACITY = 30;
+  const ME_KEY = "pgr21-ai4-me";
+
+  const $ = (id) => document.getElementById(id);
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const store = {
+    get() { try { return localStorage.getItem(ME_KEY) || ""; } catch { return ""; } },
+    set(v) { try { localStorage.setItem(ME_KEY, v); } catch {} },
+  };
+  const hash = (s) => { let h = 2166136261; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const rng = (seed) => () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  // ───── Ticker ─────
+  const phrases = ["Generation is Done", "2026.11.29 SUN 13:00", "Data · Art · Game", "영등포", "Call for Speakers", "PGR21 AI Seminar Vol.04"];
+  const set = phrases.map((p) => `<span>${p}</span>`).join("");
+  $("ticker").innerHTML = set + set + set + set;
+
+  // ───── Dot-matrix "04" that "generates" on load ─────
+  (() => {
+    const glyphs = {
+      0: ["01110", "10001", "10001", "10001", "10001", "10001", "01110"],
+      4: ["00010", "00110", "01010", "10010", "11111", "00010", "00010"],
+    };
+    const svg = $("matrix"), ns = "http://www.w3.org/2000/svg";
+    const lit = new Set();
+    [[0, 1], [4, 7]].forEach(([g, x0]) => glyphs[g].forEach((row, y) => [...row].forEach((c, x) => { if (c === "1") lit.add(`${x0 + x},${y + 1}`); })));
+    const on = [], idle = [];
+    for (let y = 0; y < 9; y++) for (let x = 0; x < 13; x++) {
+      const c = document.createElementNS(ns, "circle");
+      c.setAttribute("cx", x * 10 + 5); c.setAttribute("cy", y * 10 + 5); c.setAttribute("r", 3.6);
+      (lit.has(`${x},${y}`) ? on : idle).push(c);
+      svg.appendChild(c);
+    }
+    const pct = $("pct");
+    if (reduced) { on.forEach((c) => c.classList.add("on")); pct.textContent = "Done"; return; }
+    on.forEach((c, i) => setTimeout(() => {
+      c.classList.add("on");
+      pct.textContent = i === on.length - 1 ? "Done" : Math.round(((i + 1) / on.length) * 100) + "%";
+    }, 400 + i * 70));
+    setInterval(() => {
+      const c = idle[Math.floor(Math.random() * idle.length)];
+      c.classList.add("blink");
+      setTimeout(() => c.classList.remove("blink"), 500);
+    }, 260);
+  })();
+
+  // ───── Pixel art: avatars ─────
+  const SKIN = ["#f8d8b8", "#eebf94", "#c98e62", "#8d5a3b"];
+  const HAIR = ["#2a2a33", "#5b3620", "#b5742f", "#e6cf6a", "#c83c3c", "#3d5fc8", "#8c52d6", "#e8e8ee", "#2e9a6b", "#f08ab4"];
+  const SHIRT = ["#ff4a1c", "#2f6fe4", "#30a65c", "#f2c230", "#9b4dd8", "#e65a9c", "#28b6c2", "#f4f2ea", "#3a3a40", "#ff8a2a"];
+  const PANTS = ["#2b3a6b", "#36363c", "#6b4a2b", "#4a5a3a", "#5a2b3a"];
+  const CAP = ["#ff4a1c", "#2f6fe4", "#f4f2ea", "#30a65c", "#2a2a33"];
+
+  function lookOf(seed) {
+    const r = rng(hash(seed));
+    const pick = (a) => a[Math.floor(r() * a.length)];
+    return { skin: pick(SKIN), hair: pick(HAIR), shirt: pick(SHIRT), pants: pick(PANTS), cap: r() < 0.35 ? pick(CAP) : null };
+  }
+
+  const HEAD = ["................", ".....kkkkkk.....", "....khhhhhhk....", "...khhhhhhhhk...", "...khhhhhhhhk..."];
+  const FACE = {
+    down: ["...kh" + "ssssss" + "hk...", "...k" + "se" + "ssss" + "es" + "k...", "...k" + "ssssssss" + "k...", "....k" + "ssssss" + "k...."],
+    up: ["...k" + "hhhhhhhh" + "k...", "...k" + "hhhhhhhh" + "k...", "...k" + "hhhhhhhh" + "k...", "....k" + "hhhhhh" + "k...."],
+    right: ["...k" + "hhhsssss" + "k...", "...k" + "hhssss" + "es" + "k...", "...k" + "hhssssss" + "k...", "....k" + "hsssss" + "k...."],
+  };
+  const BODY = {
+    front: ["...k" + "cccccccc" + "k...", "..ksk" + "cccccc" + "ksk..", "..ksk" + "cccccc" + "ksk..", "...k" + "cccccccc" + "k..."],
+    side: ["....k" + "cccccc" + "k....", "....k" + "ccsscc" + "k....", "....k" + "ccsscc" + "k....", "....k" + "cccccc" + "k...."],
+  };
+  const LEGS = {
+    front: [
+      ["....k" + "pppppp" + "k....", "....k" + "pp" + "kk" + "pp" + "k....", "....kkk..kkk...."],
+      ["....k" + "pppppp" + "k....", "....k" + "pp" + "kk" + "pp" + "k....", "....kkk" + "........."],
+      ["....k" + "pppppp" + "k....", "....k" + "pp" + "kk" + "pp" + "k....", "........." + "kkk...."],
+    ],
+    side: [
+      ["....k" + "pppppp" + "k....", "....." + "kppppk" + ".....", "....." + "kkkkk" + "......"],
+      ["....k" + "pppppp" + "k....", "....k" + "pp..pp" + "k....", "...kkk...kkk...."],
+      ["....k" + "pppppp" + "k....", "....." + "kppppk" + ".....", "....." + "kkkkk" + "......"],
+    ],
+  };
+  const spriteCache = new Map();
+  function sprite(look, dir, frame) {
+    const key = [look.skin, look.hair, look.shirt, look.pants, look.cap, dir, frame].join("|");
+    if (spriteCache.has(key)) return spriteCache.get(key);
+    const flip = dir === "left";
+    const d = flip ? "right" : dir;
+    const side = d === "right";
+    const rows = [...HEAD, ...FACE[d], ...BODY[side ? "side" : "front"], ...LEGS[side ? "side" : "front"][frame]];
+    const c = document.createElement("canvas");
+    c.width = c.height = 16;
+    const g = c.getContext("2d");
+    const pal = { k: "#1e1e26", e: "#1e1e26", h: look.hair, s: look.skin, c: look.shirt, p: look.pants };
+    rows.forEach((row, y) => [...row].forEach((ch, x) => {
+      if (ch === ".") return;
+      g.fillStyle = look.cap && ch === "h" && y >= 1 && y <= 3 ? look.cap : pal[ch];
+      g.fillRect(flip ? 15 - x : x, y, 1, 1);
+    }));
+    if (look.cap) { // brim
+      g.fillStyle = look.cap;
+      if (d === "down") g.fillRect(4, 4, 8, 1);
+      if (side) g.fillRect(flip ? 1 : 11, 4, 4, 1);
+    }
+    spriteCache.set(key, c);
+    return c;
+  }
+
+  // ───── Pixel art: tiles ─────
+  const TS = 16;
+  const tileCache = new Map();
+  function tile(t, v, f) {
+    const key = t + v + f;
+    if (tileCache.has(key)) return tileCache.get(key);
+    const c = document.createElement("canvas");
+    c.width = c.height = TS;
+    const g = c.getContext("2d");
+    const R = (col, x, y, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+    const grass = () => {
+      R("#7ccd52", 0, 0, 16, 16);
+      [[2, 3], [9, 1], [13, 7], [5, 10], [11, 13], [1, 14], [7, 6]].forEach(([x, y], i) => {
+        if ((i + v) % 2 === 0) { R("#5fb03e", x, y, 1, 2); R("#5fb03e", x + 1, y + 1); }
+      });
+    };
+    const wall = () => { R("#f2e8d2", 0, 0, 16, 16); R("#e2d6bb", 0, 0, 16, 1); R("#d2c29e", 0, 15, 16, 1); R("#e8dcc2", 0, 7, 16, 1); };
+    switch (t) {
+      case "G": grass(); break;
+      case "H":
+        R("#5cb53e", 0, 0, 16, 16);
+        for (let i = 0; i < 4; i++) {
+          const ox = (i % 2) * 8, oy = Math.floor(i / 2) * 8;
+          R("#2f7a28", ox + 1, oy + 3, 1, 5); R("#2f7a28", ox + 2, oy + 2, 1, 2); R("#2f7a28", ox + 3, oy + 1, 1, 7);
+          R("#2f7a28", ox + 4, oy + 2, 1, 2); R("#2f7a28", ox + 5, oy + 3, 1, 5); R("#9be36a", ox + 3 - (f ? 1 : 0), oy + 2, 1, 2);
+        }
+        break;
+      case "F":
+        grass();
+        [[3, 3, "#ffffff"], [11, 9, v ? "#ff6a6a" : "#ffd84a"], [6, 12, "#ff9ad0"]].forEach(([x, y, col]) => {
+          const o = f ? 1 : 0;
+          R(col, x - 1, y + o, 1, 1); R(col, x + 1, y + o, 1, 1); R(col, x, y - 1 + o, 1, 1); R(col, x, y + 1 + o, 1, 1);
+          R("#f2b81c", x, y + o, 1, 1);
+        });
+        break;
+      case "P":
+        R("#e9d7a0", 0, 0, 16, 16);
+        [[3, 2], [11, 5], [6, 9], [13, 12], [1, 13], [8, 14]].forEach(([x, y], i) => { if ((i + v) % 3 !== 0) R("#d3be82", x, y, 2, 1); });
+        break;
+      case "T": {
+        grass();
+        const O = [6, 10, 12, 14, 14, 14, 14, 14, 12, 10, 6];
+        O.forEach((w, i) => R("#1b4d26", 8 - w / 2, i + 1, w, 1));
+        O.slice(0, 9).forEach((w, i) => R("#2f8a3e", 8 - (w - 2) / 2, i + 2, w - 2, 1));
+        R("#226a31", 4, 9, 8, 1); R("#4cab55", 4, 4, 3, 2); R("#4cab55", 5, 3, 2, 1); R("#6cc56e", 5, 4, 1, 1);
+        R("#5a3a22", 7, 12, 2, 3); R("#3e2816", 7, 14, 2, 1);
+        break;
+      }
+      case "W": {
+        R("#4b9fe6", 0, 0, 16, 16);
+        const o = f ? 3 : 0;
+        R("#a6d8ff", (2 + o) % 12, 4, 4, 1); R("#a6d8ff", (9 + o) % 12, 11, 4, 1); R("#3a86cc", (6 + o) % 12, 7, 3, 1);
+        break;
+      }
+      case "R":
+        R("#e8542c", 0, 0, 16, 16);
+        [3, 7, 11, 15].forEach((y) => R("#a83a1a", 0, y, 16, 1));
+        [0, 4, 8, 12].forEach((y, i) => R("#c4461f", i % 2 ? 4 : 12, y, 1, 3));
+        R("#ff8a5c", 0, 0, 16, 1);
+        break;
+      case "B": wall(); break;
+      case "N": wall(); R("#5a4a3a", 3, 3, 10, 9); R("#8fd0ff", 4, 4, 8, 7); R("#ffffff", 5, 5, 2, 2); R("#5a4a3a", 7, 4, 1, 7); R("#5a4a3a", 4, 7, 8, 1); break;
+      case "D": wall(); R("#3e2816", 3, 2, 10, 14); R("#7a4f2e", 4, 3, 8, 13); R("#6a4226", 7, 3, 1, 13); R("#f2c230", 10, 9, 1, 2); break;
+      case "S":
+        grass();
+        R("#5a3a22", 7, 10, 2, 5); R("#3e2816", 2, 2, 12, 9); R("#c89a5a", 3, 3, 10, 7); R("#e0b878", 3, 3, 10, 1);
+        R("#8a5f2e", 5, 5, 6, 1); R("#8a5f2e", 5, 7, 4, 1);
+        break;
+    }
+    tileCache.set(key, c);
+    return c;
+  }
+
+  // ───── Map ─────
+  const MW = 48, MH = 36;
+  const map = (() => {
+    const r = rng(2026);
+    const m = Array.from({ length: MH }, () => Array(MW).fill("G"));
+    const put = (x, y, t) => { if (x >= 0 && y >= 0 && x < MW && y < MH) m[y][x] = t; };
+    const rect = (x0, y0, x1, y1, t, p = 1) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (r() < p) put(x, y, t); };
+    for (let i = 0; i < 110; i++) put(2 + Math.floor(r() * (MW - 4)), 2 + Math.floor(r() * (MH - 4)), "T");
+    for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) if (x < 2 || y < 2 || x >= MW - 2 || y >= MH - 2) m[y][x] = "T";
+    rect(14, 4, 34, 24, "G"); rect(3, 3, 13, 14, "G"); rect(3, 19, 14, 31, "G"); rect(35, 19, 45, 32, "G");
+    rect(4, 4, 12, 12, "F", 0.45);                                  // ART 정원
+    for (let y = 20; y <= 31; y++) for (let x = 3; x <= 14; x++)    // DATA 호수
+      if ((x - 8.5) ** 2 / 26 + (y - 25.5) ** 2 / 22 < 1) put(x, y, "W");
+    rect(36, 21, 44, 31, "H", 0.8);                                 // GAME 수풀
+    rect(17, 13, 31, 21, "P");
+    rect(2, 17, MW - 3, 17, "P"); rect(24, 13, 24, MH - 3, "P");
+    rect(19, 5, 29, 8, "R"); rect(19, 9, 29, 11, "B");
+    put(21, 10, "N"); put(27, 10, "N"); put(24, 11, "D"); put(24, 12, "P"); put(23, 12, "P"); put(25, 12, "P");
+    [[22, 12], [32, 14], [13, 12], [15, 22], [34, 22]].forEach(([x, y]) => put(x, y, "S"));
+    return m;
+  })();
+  const passable = (x, y) => x >= 0 && y >= 0 && x < MW && y < MH && "GPFH".includes(map[y][x]);
+
+  // ───── Dialog content ─────
+  let people = [];
+  let me = store.get();
+  const SIGNS = {
+    "22,12": () => [["안내판", "GENERATION IS DONE"], ["안내판", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 13:00 · 영등포"]],
+    "32,14": () => [["마을 게시판", `마을 주민 ${people.length}명 · 입주 심사 중 ${pending}명 · 정원 ${CAPACITY}명`], ["마을 게시판", "접수를 마치고 운영진 확인을 받으면 이 마을에 내 아바타가 입주한다고 적혀 있다."]],
+    "13,12": () => [["ART 정원", "그림이 몇 초 만에 피어나는 곳."], ["ART 정원", "고르고 버리는 취향도 창작일까?"]],
+    "15,22": () => [["DATA 호수", "분석은 한 줄 프롬프트가 됐다."], ["DATA 호수", "그럼 어떤 질문을 던질지는 누가 정하지?"]],
+    "34,22": () => [["GAME 수풀", "코드도, 에셋도, NPC 대사도 생성된다."], ["GAME 수풀", "…방금 그 대사도? 그럼 재미는 누가 설계하지?"]],
+  };
+  const IDLE_LINES = ["생성은 끝났대. 그럼 이제 우린 뭘 하지?", "11월 29일에 여기서 봐!", "오늘은 만들러 온 게 아니라 이야기하러 왔어.", "프롬프트 쓰다 보니 벌써 11월이네.", "발표 듣고 토론까지 하면 배가 고플 거야. 피자 있대."];
+
+  // ───── Entities ─────
+  const mk = (o) => Object.assign({ dir: "down", fx: o.x, fy: o.y, t: 1, moving: false, alt: false, wait: 500 + Math.random() * 2000 }, o);
+  const player = mk({ x: 24, y: 15, look: lookOf("손님"), nick: "나", kind: "me" });
+  let npcs = [
+    mk({ x: 22, y: 13, look: lookOf("짬뽕순두부"), nick: "짬뽕순두부", kind: "staff", still: true,
+      say: () => [["짬뽕순두부", "어서 와! 이번 주제는 Generation is Done이야."], ["짬뽕순두부", "만드는 건 쉬워졌어. 그다음 이야기를 해 보자고."]] }),
+    mk({ x: 26, y: 13, look: lookOf("Tiny"), nick: "Tiny", kind: "staff", still: true,
+      say: () => [["Tiny", "발표하고 싶은 이야기가 있으면 아래 접수처에서 발표 참가로 신청해 줘."], ["Tiny", "데이터든 아트든 게임이든, 직접 해 본 이야기면 돼."]] }),
+  ];
+  const all = () => [player, ...npcs];
+  const occupied = (x, y, self) => all().some((e) => e !== self && e.x === x && e.y === y);
+  const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  const OPP = { up: "down", down: "up", left: "right", right: "left" };
+
+  function spawnSpot(seed) {
+    const r = rng(hash(seed));
+    for (let i = 0; i < 400; i++) {
+      const x = 4 + Math.floor(r() * (MW - 8)), y = 13 + Math.floor(r() * (MH - 17));
+      if (passable(x, y) && !occupied(x, y)) return [x, y];
+    }
+    return [24, 20];
+  }
+
+  function syncPeople(list) {
+    people = list;
+    player.data = null;
+    if (me) { player.nick = me; player.look = lookOf(me); }
+    const keep = npcs.filter((n) => n.kind === "staff");
+    const byNick = new Map(npcs.filter((n) => n.kind !== "staff").map((n) => [n.nick, n]));
+    for (const p of list) {
+      if (me && p.nick === me) { player.nick = p.nick; player.look = lookOf(p.nick); player.data = p; continue; }
+      let n = byNick.get(p.nick);
+      if (!n) {
+        const [x, y] = spawnSpot(p.nick);
+        n = mk({ x, y, home: [x, y], look: lookOf(p.nick), nick: p.nick });
+      }
+      n.kind = p.type; n.data = p;
+      n.say = () => {
+        const lines = [[p.nick, p.line || IDLE_LINES[hash(p.nick) % IDLE_LINES.length]]];
+        if (p.type === "talk") lines.push([p.nick, `11월 29일에 「${p.title || "TBD"}」 발표를 할 거야.`]);
+        lines.push(["", `${p.nick} · 주민 번호 #${String(p.seat).padStart(2, "0")}${p.status === "대기" ? " · 대기 중" : ""}`]);
+        return lines;
+      };
+      keep.push(n);
+    }
+    npcs = keep;
+    $("hud-n").textContent = list.length;
+    $("hud-me").textContent = !me ? "손님으로 구경 중" : player.data ? `${me} 님으로 걷는 중` : `${me} 님 · 입주 확인 대기 중`;
+  }
+  if (me) syncPeople([]);
+
+  // ───── Game loop ─────
+  const game = $("game"), cv = $("cv"), ctx = cv.getContext("2d");
+  let scale = 3, dpr = 1, active = false, held = [], dialog = null;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = game.clientWidth;
+    const h = Math.min(Math.round(w * 0.62), Math.round(innerHeight * 0.72));
+    cv.style.height = h + "px";
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    const tilesAcross = w < 520 ? 11 : 17;
+    scale = Math.max(2, Math.round(cv.width / (tilesAcross * TS)));
+  }
+  new ResizeObserver(resize).observe(game);
+
+  function tryMove(e, dir, ms) {
+    e.dir = dir;
+    const [dx, dy] = DIRS[dir];
+    const nx = e.x + dx, ny = e.y + dy;
+    if (!passable(nx, ny) || occupied(nx, ny, e)) return false;
+    if (e.home && (Math.abs(nx - e.home[0]) > 4 || Math.abs(ny - e.home[1]) > 4)) return false;
+    e.fx = e.x; e.fy = e.y; e.x = nx; e.y = ny; e.t = 0; e.ms = ms; e.moving = true; e.alt = !e.alt;
+    return true;
+  }
+
+  function update(dt) {
+    for (const e of all()) {
+      if (e.moving) { e.t = Math.min(1, e.t + dt / e.ms); if (e.t >= 1) e.moving = false; }
+    }
+    if (!dialog && !player.moving && held.length) tryMove(player, held[held.length - 1], 170);
+    for (const n of npcs) {
+      if (n.still || n.moving || n.talking) continue;
+      n.wait -= dt;
+      if (n.wait > 0) continue;
+      n.wait = 900 + Math.random() * 2800;
+      const dir = Object.keys(DIRS)[Math.floor(Math.random() * 4)];
+      if (Math.random() < 0.3) n.dir = dir; else tryMove(n, dir, 320);
+    }
+  }
+
+  const pos = (e) => [(e.fx + (e.x - e.fx) * e.t) * TS, (e.fy + (e.y - e.fy) * e.t) * TS];
+
+  function render(now) {
+    const s = scale;
+    const vw = cv.width / s, vh = cv.height / s;
+    const [ppx, ppy] = pos(player);
+    const camX = Math.max(0, Math.min(ppx + 8 - vw / 2, MW * TS - vw));
+    const camY = Math.max(0, Math.min(ppy + 8 - vh / 2, MH * TS - vh));
+    const ox = Math.round(camX * s), oy = Math.round(camY * s);
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "#1b4d26"; ctx.fillRect(0, 0, cv.width, cv.height);
+    const f = Math.floor(now / 600) % 2;
+    const x0 = Math.floor(camX / TS), y0 = Math.floor(camY / TS);
+    const x1 = Math.min(MW - 1, Math.ceil((camX + vw) / TS)), y1 = Math.min(MH - 1, Math.ceil((camY + vh) / TS));
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      ctx.drawImage(tile(map[y][x], (x * 7 + y * 13) % 2, f), x * TS * s - ox, y * TS * s - oy, TS * s, TS * s);
+    }
+    const ents = all().map((e) => ({ e, p: pos(e) })).sort((a, b) => a.p[1] - b.p[1]);
+    for (const { e, p } of ents) {
+      const sx = Math.round(p[0] * s) - ox, sy = Math.round(p[1] * s) - oy;
+      if (sx < -TS * s * 2 || sy < -TS * s * 2 || sx > cv.width + TS * s || sy > cv.height + TS * s) continue;
+      const frame = e.moving ? (e.t < 0.5 ? (e.alt ? 1 : 2) : 0) : 0;
+      const bob = e.moving && e.t < 0.5 ? s : 0;
+      ctx.fillStyle = "rgba(0,0,0,0.22)";
+      ctx.beginPath(); ctx.ellipse(sx + 8 * s, sy + 14.5 * s, 5 * s, 2 * s, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.drawImage(sprite(e.look, e.dir, frame), sx, sy - 3 * s - bob, TS * s, TS * s);
+      if (!e.moving && map[e.y][e.x] === "H") ctx.drawImage(tile("H", 0, f), 0, 10, 16, 6, sx, sy + 10 * s, TS * s, 6 * s);
+    }
+    const fs = Math.round(13 * dpr);
+    ctx.font = `700 ${fs}px "Noto Sans KR", sans-serif`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (const { e, p } of ents) {
+      const cx = Math.round((p[0] + 8) * s) - ox, cy = Math.round((p[1] - 5) * s) - oy - fs * 0.6;
+      if (cx < -200 || cy < -40 || cx > cv.width + 200 || cy > cv.height + 40) continue;
+      const label = e.kind === "talk" ? "🎤 " + e.nick : e.nick;
+      const w = ctx.measureText(label).width + fs;
+      const bg = e.kind === "me" ? "#ffe14a" : e.kind === "talk" ? "#ff4a1c" : e.kind === "staff" ? "#2f6fe4" : "rgba(16,16,22,0.78)";
+      ctx.fillStyle = bg;
+      ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - fs * 0.75, w, fs * 1.5, fs * 0.35); ctx.fill();
+      ctx.fillStyle = e.kind === "me" || e.kind === "talk" ? "#111" : "#fff";
+      ctx.fillText(label, cx, cy + dpr * 0.5);
+    }
+  }
+
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(64, now - last); last = now;
+    update(dt); render(now);
+    requestAnimationFrame(loop);
+  }
+  resize();
+  requestAnimationFrame(loop);
+
+  // ───── Dialog box ─────
+  let typer = null;
+  function openDialog(lines, onClose) { dialog = { lines, i: 0, onClose }; showLine(); }
+  function showLine() {
+    const [who, text] = dialog.lines[dialog.i];
+    $("dlg").classList.add("show");
+    $("dlg-who").textContent = who;
+    $("dlg-more").style.visibility = "hidden";
+    clearInterval(typer);
+    const out = $("dlg-text");
+    if (reduced) { out.textContent = text; dialog.typing = false; $("dlg-more").style.visibility = "visible"; return; }
+    let n = 0; dialog.typing = true; out.textContent = "";
+    typer = setInterval(() => {
+      n++; out.textContent = text.slice(0, n);
+      if (n >= text.length) { clearInterval(typer); dialog.typing = false; $("dlg-more").style.visibility = "visible"; }
+    }, 28);
+  }
+  function advance() {
+    if (dialog.typing) {
+      clearInterval(typer); dialog.typing = false;
+      $("dlg-text").textContent = dialog.lines[dialog.i][1]; $("dlg-more").style.visibility = "visible";
+      return;
+    }
+    dialog.i++;
+    if (dialog.i < dialog.lines.length) return showLine();
+    $("dlg").classList.remove("show");
+    const done = dialog.onClose; dialog = null; done && done();
+  }
+
+  function act() {
+    if (dialog) return advance();
+    if (player.moving) return;
+    const [dx, dy] = DIRS[player.dir];
+    const tx = player.x + dx, ty = player.y + dy;
+    const npc = npcs.find((n) => n.x === tx && n.y === ty);
+    if (npc && npc.say) {
+      const prevDir = npc.dir;
+      npc.dir = OPP[player.dir]; npc.talking = true;
+      return openDialog(npc.say(), () => { npc.talking = false; if (npc.still) npc.dir = prevDir; });
+    }
+    const t = map[ty] && map[ty][tx];
+    if (t === "S" && SIGNS[`${tx},${ty}`]) return openDialog(SIGNS[`${tx},${ty}`]());
+    if (t === "D") return openDialog([["", "문이 굳게 잠겨 있다."], ["", "「11월 29일 13:00 개장」이라고 적혀 있다."],
+      ["", player.data ? "입장권은 이미 챙겼다!" : "아래 접수처에서 먼저 입장권을 받아 오자."]]);
+    if (t === "W") return openDialog([["", "물고기는 아직 생성되지 않았다."]]);
+    if (t === "F") return openDialog([["", "꽃이 피어 있다. 사람이 심었는지, 생성됐는지는 알 수 없다."]]);
+  }
+
+  // ───── Input ─────
+  const KEYS = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right", w: "up", s: "down", a: "left", d: "right", W: "up", S: "down", A: "left", D: "right" };
+  function enter() { game.focus(); }
+  $("enter").addEventListener("click", enter);
+  game.addEventListener("focus", () => { active = true; game.classList.add("on"); });
+  game.addEventListener("blur", () => { active = false; held = []; game.classList.remove("on"); });
+  game.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape") { game.blur(); return; }
+    const d = KEYS[ev.key];
+    if (d) { ev.preventDefault(); if (!held.includes(d)) held.push(d); return; }
+    if (ev.key === "z" || ev.key === "Z" || ev.key === " " || ev.key === "Enter") { ev.preventDefault(); if (!ev.repeat) act(); }
+  });
+  game.addEventListener("keyup", (ev) => { const d = KEYS[ev.key]; if (d) held = held.filter((h) => h !== d); });
+  document.querySelectorAll(".dpad button").forEach((b) => {
+    const d = b.dataset.dir;
+    const down = (ev) => { ev.preventDefault(); if (!active) enter(); if (!held.includes(d)) held.push(d); };
+    const up = () => { held = held.filter((h) => h !== d); };
+    b.addEventListener("pointerdown", down);
+    ["pointerup", "pointerleave", "pointercancel"].forEach((t) => b.addEventListener(t, up));
+  });
+  $("btn-a").addEventListener("pointerdown", (ev) => { ev.preventDefault(); if (!active) enter(); act(); });
+  document.querySelector(".pad").addEventListener("pointerdown", (ev) => ev.preventDefault());
+
+  // ───── Data: people & speakers ─────
+  function renderTalks() {
+    const ol = $("talks");
+    const talks = people.filter((p) => p.type === "talk");
+    ol.replaceChildren();
+    if (!talks.length) {
+      const li = document.createElement("li");
+      const sp = document.createElement("span"); sp.className = "empty"; sp.textContent = "첫 번째 발표 신청을 기다리고 있습니다.";
+      li.append(sp); ol.append(li); return;
+    }
+    talks.forEach((p, i) => {
+      const li = document.createElement("li");
+      const n = document.createElement("span"); n.className = "n"; n.textContent = String(i + 1).padStart(2, "0");
+      const t = document.createElement("span"); t.className = "t"; t.textContent = p.title || "TBD";
+      const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = p.nick;
+      li.append(n, t, tag); ol.append(li);
+    });
+  }
+  let total = 0, pending = 0; // 승인 대기자까지 포함한 전체 접수 수
+  function renderCounts() {
+    const left = Math.max(0, CAPACITY - total);
+    $("seats").textContent = API ? left : CAPACITY;
+    $("seats-note").textContent = API ? `자리 남음 · 정원 ${CAPACITY}명` : "명 내외 · 피자와 음료 제공";
+    $("live").textContent = API ? (left ? "접수 중" : "대기 접수 중") : "접수 준비 중";
+  }
+  async function loadPeople() {
+    if (!API) return;
+    try {
+      const res = await fetch(API, { cache: "no-store" });
+      const data = await res.json();
+      if (!data.ok) return;
+      total = data.total || 0; pending = data.pending || 0;
+      syncPeople(data.people || []);
+      renderTalks(); renderCounts();
+    } catch (err) { /* 다음 주기에 다시 시도 */ }
+  }
+  renderCounts();
+  if (API) { loadPeople(); setInterval(loadPeople, 30000); }
+  else $("api-state").textContent = "접수 연결 준비 중입니다. 열리면 이 자리에서 바로 신청할 수 있습니다.";
+
+  // ───── Form ─────
+  const form = $("form");
+  const label = { join: "일반 참가 접수", talk: "발표 참가 접수" };
+  document.querySelectorAll('input[name="kind"]').forEach((r) => r.addEventListener("change", () => {
+    form.dataset.type = r.value; $("submit-label").textContent = label[r.value];
+  }));
+  if (!API) { $("submit").disabled = true; $("submit-label").textContent = "접수 오픈 예정"; }
+
+  form.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    if (!API) return;
+    const fd = new FormData(form);
+    const type = form.dataset.type;
+    const msg = $("msg");
+    msg.className = "msg";
+    const nick = String(fd.get("nick") || "").trim();
+    const email = String(fd.get("email") || "").trim();
+    if (!nick) { msg.className = "msg err"; msg.textContent = "닉네임을 적어 주세요."; return; }
+    if (!String(fd.get("line") || "").trim()) { msg.className = "msg err"; msg.textContent = "마을에서 할 한마디를 적어 주세요."; return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.className = "msg err"; msg.textContent = "이메일 주소를 확인해 주세요."; return; }
+    const body = {
+      type, nick, email, line: fd.get("line"), public: fd.get("public") === "on", website: fd.get("website"),
+      title: fd.get("title"), abstract: fd.get("abstract"), length: fd.get("length"),
+    };
+    $("submit").disabled = true; msg.textContent = "생성 중…";
+    try {
+      // text/plain 본문이라 프리플라이트 없이 Apps Script로 바로 갑니다.
+      const res = await fetch(API, { method: "POST", body: JSON.stringify(body) });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      msg.textContent = data.updated ? "기존 접수 내용을 고쳤습니다." : "접수됐습니다. 확인 메일은 운영진이 따로 보냅니다.";
+      me = nick; store.set(nick);
+      const face = $("me-face").getContext("2d");
+      face.clearRect(0, 0, 16, 16); face.drawImage(sprite(lookOf(nick), "down", 0), 0, 0);
+      $("me-seat").textContent = "#" + String(data.seat).padStart(2, "0");
+      $("me-text").textContent = data.status === "대기"
+        ? `${nick} 님, 정원이 차서 대기 명단에 올랐습니다. 자리가 나면 연락드립니다.`
+        : data.approved
+          ? `${nick} 님은 이미 마을 주민입니다. 위로 올라가 걸어 보세요.`
+          : `${nick} 님의 아바타가 생성됐습니다. 운영진이 확인하면 마을에 입주하고 한마디가 반영됩니다.`;
+      $("welcome").classList.add("show");
+      await loadPeople();
+    } catch (err) {
+      msg.className = "msg err";
+      msg.textContent = err.message === "invalid" ? "입력값을 확인해 주세요." : "접수가 전달되지 않았습니다. 잠시 뒤 다시 시도해 주세요.";
+    } finally {
+      $("submit").disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

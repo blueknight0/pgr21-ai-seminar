@@ -55,8 +55,6 @@ a { color: inherit; }
 /* ───── Hero poster ───── */
 .poster {
   min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto;
-  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
-  background-size: calc(100% / 6) 100%;
 }
 .poster > .wrap { width: 100%; }
 .meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--ink); }
@@ -73,9 +71,9 @@ a { color: inherit; }
 .stage > * { min-width: 0; }
 .kicker { display: inline-block; background: var(--accent); color: var(--accent-ink); padding: 4px 10px; margin: 0 0 22px; font-weight: 600; }
 h1 {
-  font-family: var(--font-num); font-weight: 900; font-stretch: 68%;
-  font-size: clamp(4.2rem, 1rem + 11vw, 12.5rem); line-height: 0.84; letter-spacing: -0.02em;
-  text-transform: uppercase; margin: 0;
+  font-family: var(--font-num); font-weight: 900; font-stretch: 68%; font-variation-settings: "wdth" 68;
+  font-size: clamp(3rem, 7.4vw, 8.4rem); line-height: 0.86; letter-spacing: -0.02em;
+  text-transform: uppercase; margin: 0; white-space: nowrap;
 }
 h1 .out { color: transparent; -webkit-text-stroke: 2px var(--ink); }
 h1 .acc { color: var(--accent); }
@@ -88,7 +86,7 @@ h1 .acc { color: var(--accent); }
 .matrix circle.blink { fill: var(--ink); }
 .matrix-cap { display: flex; justify-content: space-between; margin-top: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
-.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); margin: 0; }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); margin-block: 0; }
 .facts > div { padding: 16px 12px 24px 0; min-width: 0; }
 .facts > div + div { padding-left: 12px; border-left: 1px solid var(--line); }
 .facts dt { color: var(--muted); margin-bottom: 6px; }
@@ -250,7 +248,7 @@ form[data-type="talk"] .talk-only { display: grid; }
 .lineup .t { font-weight: 900; font-size: clamp(1.25rem, 0.9rem + 1.6vw, 2.4rem); line-height: 1.2; letter-spacing: -0.02em; }
 .lineup .tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
 .lineup li:hover .tag { color: inherit; }
-.lineup .empty { display: block; color: var(--muted); font-weight: 700; }
+.lineup .empty { grid-column: 1 / -1; color: var(--muted); font-weight: 700; }
 
 /* Steps */
 .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); counter-reset: s; border-top: 1px solid var(--ink); }

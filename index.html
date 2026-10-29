@@ -674,7 +674,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
   const ROBOT_PAL = { k: "#1e1e26", m: "#d5dde8", e: "#3de0ff", d: "#5a6a80", b: "#8fa3bd", l: "#ffe14a", r: "#ff4a1c", p: "#5a6a80" };
   const ROBOT = { robot: true };
-  // Sponsors wear a crown, drawn on top of the sprite so it sits above the head (rows -3..0).
+  // Sponsors wear a crown, drawn on top of the sprite so it sits on the head (sprite rows -1..2).
   const SPONSORS = new Set(["Psyki"]);
   const CROWN = ["g..gg..g", "gg.gg.gg", "gggggggg", "dgrddrgd"];
   const CROWN_PAL = { g: "#ffd23a", d: "#c48a10", r: "#ff4a1c" };
@@ -940,7 +940,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       if (SPONSORS.has(e.nick)) CROWN.forEach((row, y) => [...row].forEach((ch, x) => {
         if (ch === ".") return;
         ctx.fillStyle = CROWN_PAL[ch];
-        ctx.fillRect(sx + (4 + x) * s, sy + (y - 6) * s - bob, s, s);
+        ctx.fillRect(sx + (4 + x) * s, sy + (y - 4) * s - bob, s, s);
       }));
       if (!e.moving && map[e.y][e.x] === "H") ctx.drawImage(tile("H", 0, f), 0, 10, 16, 6, sx, sy + 10 * s, TS * s, 6 * s);
     }
@@ -948,7 +948,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     ctx.font = `700 ${fs}px "Noto Sans KR", sans-serif`;
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     for (const { e, p } of ents) {
-      const cx = Math.round((p[0] + 8) * s) - ox, cy = Math.round((p[1] - (SPONSORS.has(e.nick) ? 8 : 5)) * s) - oy - fs * 0.6;
+      const cx = Math.round((p[0] + 8) * s) - ox, cy = Math.round((p[1] - (SPONSORS.has(e.nick) ? 6 : 5)) * s) - oy - fs * 0.6;
       if (cx < -200 || cy < -40 || cx > cv.width + 200 || cy > cv.height + 40) continue;
       const label = e.kind === "talk" ? "🎤 " + e.nick : e.nick;
       const w = ctx.measureText(label).width + fs;

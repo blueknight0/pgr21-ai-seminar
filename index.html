@@ -196,10 +196,26 @@ h2 { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(2.4
 /* Sign-up */
 .signup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
 .signup > * { min-width: 0; }
-.tabs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--ink); }
-.tabs label { cursor: pointer; padding: clamp(18px, 2.4vw, 28px); display: grid; gap: 10px; }
-.tabs label + label { border-left: 1px solid var(--ink); }
+.pick-head { margin: 0 0 12px; color: var(--accent); }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.tabs label {
+  cursor: pointer; padding: clamp(18px, 2.4vw, 28px); display: grid; gap: 10px; position: relative;
+  border: 2px solid var(--ink); background: var(--field); box-shadow: 6px 6px 0 var(--ink);
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.tabs label:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); }
+.tabs label:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 var(--ink); }
+.tabs label:has(input:checked) { transform: translate(4px, 4px); box-shadow: 2px 2px 0 var(--ink); }
 .tabs input { position: absolute; opacity: 0; pointer-events: none; }
+.tabs .pick {
+  justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  font: 700 0.8125rem/1 var(--font-body); padding: 7px 10px 7px 8px; border: 2px solid currentColor; border-radius: 999px;
+}
+.tabs .pick::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; box-sizing: border-box; }
+.tabs .pick::after { content: "선택"; }
+.tabs label:has(input:checked) .pick { background: var(--ink); color: var(--accent); border-color: var(--ink); }
+.tabs label:has(input:checked) .pick::before { background: currentColor; box-shadow: inset 0 0 0 2px var(--ink); }
+.tabs label:has(input:checked) .pick::after { content: "선택됨 ✓"; }
 .tabs .word { font-family: var(--font-num); font-weight: 900; font-stretch: 62%; font-size: clamp(3.4rem, 1.6rem + 5vw, 6.5rem); line-height: 0.8; text-transform: uppercase; }
 .tabs b { font-size: 1.05rem; }
 .tabs small { color: var(--muted); font-size: 0.875rem; line-height: 1.5; }
@@ -322,12 +338,11 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   .lineup .tag { display: none; }
   .prog li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .tabs { grid-template-columns: minmax(0, 1fr); }
-  .tabs label + label { border-left: 0; border-top: 1px solid var(--ink); }
   h1 .out { -webkit-text-stroke-width: 1.5px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ticker-track, .meta .live::before, .dlg .more { animation: none; }
-  .btn, .lineup li { transition: none; }
+  .btn, .lineup li, .tabs label { transition: none; }
 }
 </style>
 </head>
@@ -425,9 +440,10 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       </div>
       <div class="signup">
         <div>
-          <div class="tabs" role="radiogroup" aria-label="접수 구분">
-            <label><input type="radio" name="kind" value="join" checked><span class="word" aria-hidden="true">Join</span><b>일반 참가</b><small>듣고, 묻고, 이야기 나누기</small></label>
-            <label><input type="radio" name="kind" value="talk"><span class="word" aria-hidden="true">Talk</span><b>발표 참가</b><small>무대에 서기 · 참가비 면제</small></label>
+          <p class="pick-head mono" id="pick-h">Step 1 · 접수 구분을 고르세요</p>
+          <div class="tabs" role="radiogroup" aria-labelledby="pick-h">
+            <label><input type="radio" name="kind" value="join" checked><span class="pick" aria-hidden="true"></span><span class="word" aria-hidden="true">Join</span><b>일반 참가</b><small>듣고, 묻고, 이야기 나누기</small></label>
+            <label><input type="radio" name="kind" value="talk"><span class="pick" aria-hidden="true"></span><span class="word" aria-hidden="true">Talk</span><b>발표 참가</b><small>무대에 서기 · 참가비 면제</small></label>
           </div>
           <dl class="terms">
             <div><dt>대상</dt><dd>PGR21 AI포럼 톡방 멤버</dd></div>
@@ -441,6 +457,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
 
         <div>
           <form id="form" data-type="join" novalidate>
+            <p class="pick-head mono" style="margin:0" id="step2">Step 2 · 일반 참가 정보를 적어 주세요</p>
             <div class="notice" role="note">
               <b>PGR21 AI포럼 톡방 멤버 대상 행사입니다.</b>
               <p>닉네임은 톡방에서 쓰는 아이디와 똑같이 적어 주세요. 톡방 아이디와 일치하지 않으면 등록이 거부될 수 있습니다.</p>
@@ -1120,6 +1137,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   const label = { join: "일반 참가 접수", talk: "발표 참가 접수" };
   document.querySelectorAll('input[name="kind"]').forEach((r) => r.addEventListener("change", () => {
     form.dataset.type = r.value; $("submit-label").textContent = label[r.value];
+    $("step2").textContent = `Step 2 · ${r.value === "talk" ? "발표 참가" : "일반 참가"} 정보를 적어 주세요`;
   }));
   if (!API) { $("submit").disabled = true; $("submit-label").textContent = "접수 오픈 예정"; }
 

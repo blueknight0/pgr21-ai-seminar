@@ -641,18 +641,34 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       ["....k" + "pppppp" + "k....", "....." + "kppppk" + ".....", "....." + "kkkkk" + "......"],
     ],
   };
+  // Robot (Tinybot): antenna, visor eyes, grille mouth, chest light. Head rows 0-8, body 9-12, legs reuse LEGS.
+  const ROBOT_HEAD = {
+    down: ["........r.......", "........k.......", "....kkkkkkkk....", "...kmmmmmmmmk...", "...kmeemmeemk...", "...kmeemmeemk...", "...kmmmmmmmmk...", "...kmmddddmmk...", "....kkkkkkkk...."],
+    up: ["........r.......", "........k.......", "....kkkkkkkk....", "...kmmmmmmmmk...", "...kmmmmmmmmk...", "...kmmmmmmmmk...", "...kmmmmmmmmk...", "...kmmmmmmmmk...", "....kkkkkkkk...."],
+    right: ["........r.......", "........k.......", "....kkkkkkkk....", "...kmmmmmmmmk...", "...kmmmmmmeek...", "...kmmmmmmeek...", "...kmmmmmmmmk...", "...kmmmmmmddk...", "....kkkkkkkk...."],
+  };
+  const ROBOT_BODY = {
+    front: ["...kbbbbbbbbk...", "..kmk" + "bbllbb" + "kmk..", "..kmk" + "bbbbbb" + "kmk..", "...kbbbbbbbbk..."],
+    side: ["....kbbbbbbk....", "....kbbmmbbk....", "....kbbmmbbk....", "....kbbbbbbk...."],
+  };
+  const ROBOT_PAL = { k: "#1e1e26", m: "#d5dde8", e: "#3de0ff", d: "#5a6a80", b: "#8fa3bd", l: "#ffe14a", r: "#ff4a1c", p: "#5a6a80" };
+  const ROBOT = { robot: true };
+
   const spriteCache = new Map();
   function sprite(look, dir, frame) {
-    const key = [look.skin, look.hair, look.shirt, look.pants, look.cap, dir, frame].join("|");
+    const key = [look.robot, look.skin, look.hair, look.shirt, look.pants, look.cap, dir, frame].join("|");
     if (spriteCache.has(key)) return spriteCache.get(key);
     const flip = dir === "left";
     const d = flip ? "right" : dir;
     const side = d === "right";
-    const rows = [...HEAD, ...FACE[d], ...BODY[side ? "side" : "front"], ...LEGS[side ? "side" : "front"][frame]];
+    const legs = LEGS[side ? "side" : "front"][frame];
+    const rows = look.robot
+      ? [...ROBOT_HEAD[d], ...ROBOT_BODY[side ? "side" : "front"], ...legs]
+      : [...HEAD, ...FACE[d], ...BODY[side ? "side" : "front"], ...legs];
     const c = document.createElement("canvas");
     c.width = c.height = 16;
     const g = c.getContext("2d");
-    const pal = { k: "#1e1e26", e: "#1e1e26", h: look.hair, s: look.skin, c: look.shirt, p: look.pants };
+    const pal = look.robot ? ROBOT_PAL : { k: "#1e1e26", e: "#1e1e26", h: look.hair, s: look.skin, c: look.shirt, p: look.pants };
     rows.forEach((row, y) => [...row].forEach((ch, x) => {
       if (ch === ".") return;
       g.fillStyle = look.cap && ch === "h" && y >= 1 && y <= 3 ? look.cap : pal[ch];
@@ -778,12 +794,14 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   // ───── Entities ─────
   const mk = (o) => Object.assign({ dir: "down", fx: o.x, fy: o.y, t: 1, moving: false, alt: false, wait: 500 + Math.random() * 2000 }, o);
   const player = mk({ x: 24, y: 15, look: lookOf("손님"), nick: "나", kind: "me" });
-  let npcs = [
+  // 기본 NPC. 같은 닉네임의 접수자가 마을에 입주하면 이 NPC는 빠지고 접수자 아바타만 남는다.
+  const STAFF = [
     mk({ x: 22, y: 13, look: lookOf("짬뽕순두부"), nick: "짬뽕순두부", kind: "staff", still: true,
       say: () => [["짬뽕순두부", "어서 와! 이번 주제는 Generation is Done이야."], ["짬뽕순두부", "만드는 건 쉬워졌어. 그다음 이야기를 해 보자고."]] }),
-    mk({ x: 26, y: 13, look: lookOf("Tiny"), nick: "Tiny", kind: "staff", still: true,
-      say: () => [["Tiny", "발표하고 싶은 이야기가 있으면 아래 접수처에서 발표 참가로 신청해 줘."], ["Tiny", "데이터든 아트든 게임이든, 직접 해 본 이야기면 돼."]] }),
+    mk({ x: 26, y: 13, look: ROBOT, nick: "Tinybot", kind: "staff", still: true,
+      say: () => [["Tinybot", "삐빅. 안녕하세요. 안내 로봇 Tinybot입니다."], ["Tinybot", "발표하고 싶은 이야기가 있다면 아래 접수처에서 발표 참가를 선택하세요."], ["Tinybot", "생성은 끝났습니다. 하지만 이야기는 아직입니다. 삐빅."]] }),
   ];
+  let npcs = STAFF.slice();
   const all = () => [player, ...npcs];
   const occupied = (x, y, self) => all().some((e) => e !== self && e.x === x && e.y === y);
   const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
@@ -802,7 +820,9 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     people = list;
     player.data = null;
     if (me) { player.nick = me; player.look = lookOf(me); }
-    const keep = npcs.filter((n) => n.kind === "staff");
+    const nicks = new Set(list.map((p) => p.nick));
+    if (me) nicks.add(me);
+    const keep = STAFF.filter((s) => !nicks.has(s.nick));
     const byNick = new Map(npcs.filter((n) => n.kind !== "staff").map((n) => [n.nick, n]));
     for (const p of list) {
       if (me && p.nick === me) { player.nick = p.nick; player.look = lookOf(p.nick); player.data = p; continue; }

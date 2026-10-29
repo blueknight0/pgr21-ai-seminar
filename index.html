@@ -67,7 +67,7 @@ a { color: inherit; }
 
 /* ───── Hero poster ───── */
 .poster {
-  min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto;
+  min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto auto;
 }
 .poster > .wrap { width: 100%; }
 .meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--ink); }
@@ -111,6 +111,17 @@ h1 .acc { color: var(--accent); }
 }
 .big.kr { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(2.1rem, 0.8rem + 4vw, 4.4rem); letter-spacing: -0.03em; }
 .facts small { display: block; margin-top: 8px; color: var(--muted); font-size: 0.8125rem; line-height: 1.45; }
+
+/* 후원 띠: 포스터 맨 아래, 반전색으로 눈에 띄게 */
+.sponsor-bar { background: var(--ink); color: var(--bg); }
+.sponsors { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 0 28px; padding-block: 14px; }
+.sponsors .lab { color: var(--accent); }
+.sponsors .sp { display: flex; align-items: baseline; gap: 14px; min-width: 0; padding-left: 28px; border-left: 1px solid color-mix(in srgb, var(--bg) 30%, transparent); }
+.sponsors .sp .mono { opacity: 0.7; white-space: nowrap; }
+.sponsors .sp b { font-family: var(--font-num); font-weight: 900; font-stretch: 72%; font-size: clamp(1.6rem, 1rem + 2vw, 2.6rem); line-height: 1; letter-spacing: -0.01em; }
+.sponsors .sp.main b { color: var(--accent); }
+.sponsors .sp.open b { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(1.3rem, 0.9rem + 1.4vw, 2rem); padding: 2px 10px; border: 2px dashed currentColor; }
+.sponsors .sp.open small { font-size: 0.8125rem; opacity: 0.7; }
 
 /* ───── Ticker ───── */
 .ticker { background: var(--accent); color: var(--accent-ink); overflow: hidden; border-block: 1px solid var(--ink); }
@@ -328,6 +339,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   .steps li:nth-child(3) { padding-left: 0; border-left: 0; }
   .steps li:nth-child(n+3) { border-top: 1px solid var(--line); }
   .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sponsors { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .sponsors .sp { padding-left: 0; border-left: 0; flex-wrap: wrap; }
   .meta span:nth-child(3) { padding-left: 0; }
   .meta span:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
 }
@@ -374,6 +387,14 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     <div><dt class="mono">Place</dt><dd><span class="big kr">영등포</span><small>영등포역 인근 · 장소 확정 전</small></dd></div>
     <div><dt class="mono">Seats</dt><dd><span class="big" id="seats">30</span><small id="seats-note">명 내외 · 피자와 음료 제공</small></dd></div>
   </dl>
+
+  <div class="sponsor-bar">
+    <div class="wrap sponsors" aria-label="후원">
+      <span class="mono lab">Sponsors</span>
+      <div class="sp main"><span class="mono">현물 후원</span><b>Psyki</b></div>
+      <div class="sp open"><span class="mono">현금 후원</span><b>모집중</b><small>방장에게 문의</small></div>
+    </div>
+  </div>
 </header>
 
 <div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
@@ -573,7 +594,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
 
   // ───── Ticker ─────
-  const phrases = ["Generation is Done", "2026.11.29 SUN 13:00", "Data · Art · Game", "영등포", "Call for Speakers", "PGR21 AI Seminar Vol.04"];
+  const phrases = ["Generation is Done", "2026.11.29 SUN 13:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki", "PGR21 AI Seminar Vol.04"];
   const set = phrases.map((p) => `<span>${p}</span>`).join("");
   $("ticker").innerHTML = set + set + set + set;
 

@@ -1120,19 +1120,22 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   }
 
   // ───── Input ─────
-  const KEYS = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right", w: "up", s: "down", a: "left", d: "right", W: "up", S: "down", A: "left", D: "right" };
+  // Match physical keys (ev.code): with the Korean IME on, ev.key arrives as "Process" or a jamo like "ㅈ".
+  const KEYS = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right", KeyW: "up", KeyS: "down", KeyA: "left", KeyD: "right" };
+  const ACT = ["KeyZ", "Space", "Enter", "NumpadEnter"];
+  const codeOf = (ev) => ev.code || ({ " ": "Space", z: "KeyZ", Z: "KeyZ", w: "KeyW", a: "KeyA", s: "KeyS", d: "KeyD" })[ev.key] || ev.key;
   function enter() { game.focus(); }
   $("enter").addEventListener("click", enter);
   game.addEventListener("focus", () => { active = true; game.classList.add("on"); music.start(); });
   game.addEventListener("blur", () => { active = false; held = []; game.classList.remove("on"); music.stop(); });
   game.addEventListener("keydown", (ev) => {
-    if (ev.key === "Escape") { game.blur(); return; }
-    const d = KEYS[ev.key];
+    const c = codeOf(ev);
+    if (c === "Escape") { game.blur(); return; }
+    const d = KEYS[c];
     if (d) { ev.preventDefault(); if (!held.includes(d)) held.push(d); return; }
-    if (ev.key === "z" || ev.key === "Z" || ev.key === " " || ev.key === "Enter") { ev.preventDefault(); if (!ev.repeat) act(); }
+    if (ACT.includes(c)) { ev.preventDefault(); if (!ev.repeat) act(); }
   });
-  game.addEventListener("keyup", (ev) => { const d = KEYS[ev.key]; if (d) held = held.filter((h) => h !== d); });
-  document.querySelectorAll(".dpad button").forEach((b) => {
+  game.addEventListener("keyup", (ev) => { const d = KEYS[codeOf(ev)]; if (d) held = held.filter((h) => h !== d); });  document.querySelectorAll(".dpad button").forEach((b) => {
     const d = b.dataset.dir;
     const down = (ev) => { ev.preventDefault(); if (!active) enter(); if (!held.includes(d)) held.push(d); };
     const up = () => { held = held.filter((h) => h !== d); };

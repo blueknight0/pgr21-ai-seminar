@@ -392,7 +392,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   <div class="sponsor-bar">
     <div class="wrap sponsors" aria-label="후원">
       <span class="mono lab">Sponsors</span>
-      <div class="sp main"><span class="mono">후원</span><b>Psyki</b><b class="kr">성야무인</b></div>
+      <div class="sp main"><span class="mono">후원</span><b>Psyki</b><b class="kr">성야무인</b><b>Tiny</b><b class="kr">유주하리</b></div>
       <div class="sp open"><span class="mono">후원</span><b>모집중</b><small>방장에게 문의</small></div>
     </div>
   </div>
@@ -465,13 +465,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
           <p class="pick-head mono" id="pick-h">Step 1 · 접수 구분을 고르세요</p>
           <div class="tabs" role="radiogroup" aria-labelledby="pick-h">
             <label><input type="radio" name="kind" value="join" checked><span class="pick" aria-hidden="true"></span><span class="word" aria-hidden="true">Join</span><b>일반 참가</b><small>듣고, 묻고, 이야기 나누기</small></label>
-            <label><input type="radio" name="kind" value="talk"><span class="pick" aria-hidden="true"></span><span class="word" aria-hidden="true">Talk</span><b>발표 참가</b><small>무대에 서기 · 참가비 1만 원</small></label>
+            <label><input type="radio" name="kind" value="talk"><span class="pick" aria-hidden="true"></span><span class="word" aria-hidden="true">Talk</span><b>발표 참가</b><small>무대에 서기 · 참가비 무료</small></label>
           </div>
           <dl class="terms">
             <div><dt>대상</dt><dd>PGR21 AI포럼 톡방 멤버</dd></div>
             <div><dt>그 외 참여</dt><dd>방장에게 별도 문의</dd></div>
-            <div><dt>참가비</dt><dd>일반 35,000원</dd></div>
-            <div><dt>발표자</dt><dd>참가비 10,000원</dd></div>
+            <div><dt>참가비</dt><dd>일반 26,000원</dd></div>
+            <div><dt>발표자</dt><dd>참가비 무료</dd></div>
             <div><dt>정원</dt><dd>30명 내외 · 초과 시 대기</dd></div>
             <div><dt>입금·환불</dt><dd>접수 확인 메일로 안내</dd></div>
           </dl>
@@ -595,7 +595,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
 
   // ───── Ticker ─────
-  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki · 성야무인", "PGR21 AI Seminar Vol.04"];
+  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki · 성야무인 · Tiny · 유주하리", "PGR21 AI Seminar Vol.04"];
   const set = phrases.map((p) => `<span>${p}</span>`).join("");
   $("ticker").innerHTML = set + set + set + set;
 
@@ -693,7 +693,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     },
   };
   // Sponsors wear a crown, drawn on top of the sprite so it sits on the head (sprite rows -1..2).
-  const SPONSORS = new Set(["Psyki", "성야무인"]);
+  const SPONSORS = new Set(["Psyki", "성야무인", "Tiny", "유주하리"]);
   const CROWN = ["g..gg..g", "gg.gg.gg", "gggggggg", "dgrddrgd"];
   const CROWN_PAL = { g: "#ffd23a", d: "#c48a10", r: "#ff4a1c" };
 

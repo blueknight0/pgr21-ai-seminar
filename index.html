@@ -675,18 +675,21 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
   const ROBOT_PAL = { k: "#1e1e26", m: "#d5dde8", e: "#3de0ff", d: "#5a6a80", b: "#8fa3bd", l: "#ffe14a", r: "#ff4a1c", p: "#5a6a80" };
   const ROBOT = { robot: true };
-  // 도로시(니케): 연분홍 긴 머리, 검은 리본 머리띠, 분홍 테 흰 드레스. 16줄을 통째로 그린다.
-  const DOROTHY_TOP = ["...bb......bb...", "....bkkkkkkb....", "...khhhhhhhhk...", "..khbbbbbbbbhk..", "..khhhhhhhhhhk.."];
+  // 도로시(니케): 분홍 긴 머리에 흰 리본 장식, 보라색 큰 눈, 금빛 장식을 단 흰 프릴 드레스. 16줄을 통째로 그린다.
   const DOROTHY = {
     id: "dorothy",
-    pal: { k: "#1e1e26", h: "#f8cbdb", H: "#e29ab4", s: "#fbe2cc", e: "#d6336c", b: "#2a2a33", w: "#fbf7f2", p: "#f08ab4" },
+    pal: { k: "#3a2433", h: "#ffc4d8", H: "#e88fb3", L: "#fff0f5", s: "#ffe6d6", e: "#7a3fc8", E: "#e2c8ff", b: "#ffaec0",
+      w: "#ffffff", W: "#e3dcef", g: "#f2c14e" },
     rows: {
-      down: [...DOROTHY_TOP, "..khsssssssshk..", "..kHsessssesHk..", "..kHssssssssHk..", "..kHHksssskHHk..",
-        ".kHHkwwppwwkHHk.", ".kHHswwwwwwsHHk.", ".kHkpwwwwwwpkHk.", "..kpwwwwwwwwpk..", ".kppppppppppppk.", "....kss..ssk....", "....kbb..bbk...."],
-      up: [...DOROTHY_TOP, "..khhhhhhhhhhk..", "..kHhhhhhhhhHk..", "..kHhhhhhhhhHk..", ".kHHhhhhhhhhHHk.",
-        ".kHHhhhhhhhhHHk.", ".kHHHhhhhhhHHHk.", ".kHkHHwwwwHHkHk.", "..kpwwwwwwwwpk..", ".kppppppppppppk.", "....kss..ssk....", "....kbb..bbk...."],
-      right: [...DOROTHY_TOP, "..kHhhhsssssk...", "..kHhhssssesk...", "..kHhhssssssk...", "..kHHhksssssk...",
-        "..kHHkwwppwk....", "..kHHkwwsswk....", "..kHHkwwsswk....", "...kpwwwwwwpk...", "..kppppppppppk..", ".....kssssk.....", ".....kbbbbk....."],
+      down: ["....gwg..gwg....", "....kkkkkkkk....", "...khhLLhhhhk...", "..khhhLhhhhhhk..", "..khHhhhhhhHhk..", "..khsHssssHshk..",
+        "..khseEsseEshk..", "..khseesseeshk..", ".kHhbssssssbhHk.", ".kHhhksssskhhHk.", ".kHhkwwggwwkhHk.", "kHhkswwwwwwskhHk",
+        "kHHkwwwWWwwwkHHk", "kHkwwWwwwwWwwkHk", ".kgwgwgwgwgwgwk.", "..kkkkkkkkkkkk.."],
+      up: ["....gwg..gwg....", "....kkkkkkkk....", "...khhLLhhhhk...", "..khhhLhhhhhhk..", "..khhhhhhhhhhk..", "..khhLhhhhhhhk..",
+        "..khhhhhhhhhhk..", "..khHhhhhhhHhk..", ".kHhhhhhhhhhhHk.", ".kHhhhgwwghhhHk.", ".kHhhhhwwhhhhHk.", "kHhhHhhhhhhHhhHk",
+        "kHHhHhhhhhhHhHHk", "kHkHHhhhhhhHHkHk", ".kgwgwgwgwgwgwk.", "..kkkkkkkkkkkk.."],
+      right: ["....gwg.........", "....kkkkkkk.....", "...khhLLhhhk....", "..khhhLhhhhhk...", "..khhhhhhHhhk...", "..kHhhhhsHssk...",
+        "..kHhhhsssEek...", "..kHhhhssseek...", "..kHHhhsssbsk...", "..kHHhhksssk....", "..kHHhkwwggk....", ".kHHhkwwwsswk...",
+        ".kHHhkwwwWwwk...", ".kHHkwwWwwwwwk..", ".kgwgwgwgwgwgk..", "..kkkkkkkkkkk..."],
     },
   };
   // Sponsors wear a crown, drawn on top of the sprite so it sits on the head (sprite rows -1..2).

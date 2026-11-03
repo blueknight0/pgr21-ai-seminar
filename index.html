@@ -120,6 +120,7 @@ h1 .acc { color: var(--accent); }
 .sponsors .sp .mono { opacity: 0.7; white-space: nowrap; }
 .sponsors .sp b { font-family: var(--font-num); font-weight: 900; font-stretch: 72%; font-size: clamp(1.6rem, 1rem + 2vw, 2.6rem); line-height: 1; letter-spacing: -0.01em; }
 .sponsors .sp.main b { color: var(--accent); }
+.sponsors .sp b.kr { font-family: var(--font-kr-display); font-weight: 400; font-stretch: normal; font-size: clamp(1.3rem, 0.9rem + 1.4vw, 2rem); }
 .sponsors .sp.open b { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(1.3rem, 0.9rem + 1.4vw, 2rem); padding: 2px 10px; border: 2px dashed currentColor; }
 .sponsors .sp.open small { font-size: 0.8125rem; opacity: 0.7; }
 
@@ -391,8 +392,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   <div class="sponsor-bar">
     <div class="wrap sponsors" aria-label="후원">
       <span class="mono lab">Sponsors</span>
-      <div class="sp main"><span class="mono">현물 후원</span><b>Psyki</b></div>
-      <div class="sp open"><span class="mono">현금 후원</span><b>모집중</b><small>방장에게 문의</small></div>
+      <div class="sp main"><span class="mono">후원</span><b>Psyki</b><b class="kr">성야무인</b></div>
+      <div class="sp open"><span class="mono">후원</span><b>모집중</b><small>방장에게 문의</small></div>
     </div>
   </div>
 </header>
@@ -594,7 +595,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
 
   // ───── Ticker ─────
-  const phrases = ["Generation is Done", "2026.11.29 SUN 13:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki", "PGR21 AI Seminar Vol.04"];
+  const phrases = ["Generation is Done", "2026.11.29 SUN 13:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki · 성야무인", "PGR21 AI Seminar Vol.04"];
   const set = phrases.map((p) => `<span>${p}</span>`).join("");
   $("ticker").innerHTML = set + set + set + set;
 
@@ -675,7 +676,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   const ROBOT_PAL = { k: "#1e1e26", m: "#d5dde8", e: "#3de0ff", d: "#5a6a80", b: "#8fa3bd", l: "#ffe14a", r: "#ff4a1c", p: "#5a6a80" };
   const ROBOT = { robot: true };
   // Sponsors wear a crown, drawn on top of the sprite so it sits on the head (sprite rows -1..2).
-  const SPONSORS = new Set(["Psyki"]);
+  const SPONSORS = new Set(["Psyki", "성야무인"]);
   const CROWN = ["g..gg..g", "gg.gg.gg", "gggggggg", "dgrddrgd"];
   const CROWN_PAL = { g: "#ffd23a", d: "#c48a10", r: "#ff4a1c" };
 

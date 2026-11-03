@@ -742,6 +742,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         if ((i + v) % 2 === 0) { R("#5fb03e", x, y, 1, 2); R("#5fb03e", x + 1, y + 1); }
       });
     };
+    const floor = () => { R("#c99a62", 0, 0, 16, 16); [3, 8, 13].forEach((y) => R("#b0814e", 0, y, 16, 1)); R("#b0814e", v ? 5 : 11, 0, 1, 3); R("#b0814e", v ? 9 : 2, 9, 1, 4); };
+    const table = () => { floor(); R("#4a2e17", 2, 13, 2, 3); R("#4a2e17", 12, 13, 2, 3); R("#6a4226", 0, 10, 16, 4); R("#8a5f2e", 0, 9, 16, 2); };
     const wall = () => { R("#f2e8d2", 0, 0, 16, 16); R("#e2d6bb", 0, 0, 16, 1); R("#d2c29e", 0, 15, 16, 1); R("#e8dcc2", 0, 7, 16, 1); };
     switch (t) {
       case "G": grass(); break;
@@ -800,6 +802,42 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         R("rgba(0,0,0,0.18)", 1, 15, 14, 1);
         break;
       }
+      // ── 세미나실 실내 타일 ──
+      case "Q": R("#e8dcc4", 0, 0, 16, 16); R("#d8caac", v ? 3 : 11, 0, 1, 16); R("#f2e8d2", 0, 0, 16, 1); break;
+      case "O": floor(); break;
+      case "K": // 스크린. 글씨는 render에서 위에 쓴다.
+        R("#e8dcc4", 0, 0, 16, 16); R("#3a3a40", 0, 1, 16, 14); R("#f4f8ff", 0, 2, 16, 12); R("#dfe8f6", 0, 11, 16, 3);
+        break;
+      case "C":
+        floor(); R("#2a2a33", 4, 2, 8, 6); R("#3d5fc8", 5, 3, 6, 4); R("#2a2a33", 3, 8, 10, 3); R("#4f72d8", 4, 8, 8, 2);
+        R("#2a2a33", 4, 11, 1, 4); R("#2a2a33", 11, 11, 1, 4);
+        break;
+      case "U":
+        floor(); R("#3e2816", 3, 5, 10, 11); R("#7a4f2e", 4, 6, 8, 9); R("#ff4a1c", 6, 9, 4, 2);
+        R("#1e1e26", 9, 1, 1, 5); R("#8a8a96", 8, 0, 3, 2);
+        break;
+      case "Y": // 피자
+        table(); R("#c98a2e", 2, 3, 12, 7); R("#e8542c", 3, 4, 10, 5); R("#ffe14a", 4, 4, 3, 2); R("#ffe14a", 9, 6, 3, 2); R("#ffe14a", 5, 7, 2, 1);
+        R("#a83a1a", 8, 4, 2, 2); R("#a83a1a", 4, 7, 1, 1); R("#a83a1a", 11, 5, 1, 1); R("#5fb03e", 7, 7, 1, 1);
+        R("rgba(0,0,0,0.25)", 8, 3, 1, 7); R("rgba(0,0,0,0.25)", 2, 6, 12, 1);
+        break;
+      case "Z": // 콜라와 맥주
+        table(); R("#2a0f0a", 2, 2, 3, 9); R("#2a0f0a", 3, 0, 1, 2); R("#e8202a", 2, 5, 3, 3); R("#ffffff", 2, 6, 3, 1);
+        R("#f2c230", 7, 4, 3, 7); R("#fff3c4", 7, 5, 1, 5); R("#b8bcc6", 7, 3, 3, 1);
+        R("#2f6fe4", 11, 4, 3, 7); R("#9ec0ff", 11, 5, 1, 5); R("#b8bcc6", 11, 3, 3, 1);
+        break;
+      case "V": // 소주와 위스키, 잔
+        table(); R("#2e9a6b", 2, 4, 3, 7); R("#2e9a6b", 3, 1, 1, 3); R("#ffffff", 2, 6, 3, 2); R("#30c27a", 2, 4, 1, 7);
+        R("#2e9a6b", 6, 4, 3, 7); R("#2e9a6b", 7, 1, 1, 3); R("#ffffff", 6, 6, 3, 2);
+        R("#8a4a12", 10, 3, 4, 8); R("#5a2e08", 11, 1, 2, 2); R("#f2c230", 10, 6, 4, 2);
+        if (f) R("#ffffff", 3, 5, 1, 1);
+        break;
+      case "E": floor(); R("#ff4a1c", 2, 3, 12, 11); R("#c4361a", 3, 4, 10, 9); R("#ffffff", 4, 8, 8, 1); R("#ffffff", 7, 6, 2, 1); R("#ffffff", 6, 7, 4, 1); break;
+      case "A": // 발표 안내 이젤
+        floor(); R("#5a3a22", 3, 9, 1, 7); R("#5a3a22", 12, 9, 1, 7); R("#5a3a22", 7, 11, 2, 5);
+        R("#3a3a40", 1, 0, 14, 11); R("#f4f2ea", 2, 1, 12, 9); R("#ff4a1c", 3, 2, 10, 2);
+        [4, 6, 8].forEach((y, i) => R("#3a3a40", 3, y + 1, i === 1 ? 7 : 9, 1));
+        break;
       case "S":
         grass();
         R("#5a3a22", 7, 10, 2, 5); R("#3e2816", 2, 2, 12, 9); R("#c89a5a", 3, 3, 10, 7); R("#e0b878", 3, 3, 10, 1);
@@ -811,8 +849,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   }
 
   // ───── Map ─────
-  const MW = 48, MH = 36;
-  const map = (() => {
+  let MW = 48, MH = 36;
+  const townMap = (() => {
     const r = rng(2026);
     const m = Array.from({ length: MH }, () => Array(MW).fill("G"));
     const put = (x, y, t) => { if (x >= 0 && y >= 0 && x < MW && y < MH) m[y][x] = t; };
@@ -832,7 +870,23 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     put(24, 20, "J");                                               // 광장 한가운데 개작두
     return m;
   })();
-  const passable = (x, y) => x >= 0 && y >= 0 && x < MW && y < MH && "GPFH".includes(map[y][x]);
+  // 세미나실: 마을 건물 문(24,11)으로 들어간다. 앞쪽 스크린과 연단, 객석, 벽을 따라 피자·음료·술 테이블.
+  const HALL_W = 20, HALL_H = 14;
+  const hallMap = (() => {
+    const m = Array.from({ length: HALL_H }, (_, y) => Array.from({ length: HALL_W }, (_, x) =>
+      x === 0 || x === HALL_W - 1 || y <= 1 || y === HALL_H - 1 ? "Q" : "O"));
+    const put = (x, y, t) => { m[y][x] = t; };
+    for (let x = 7; x <= 12; x++) put(x, 1, "K");
+    put(13, 3, "U");
+    for (const y of [5, 7, 9]) for (const x of [3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16]) put(x, y, "C");
+    [[1, 3, "Y"], [1, 4, "Y"], [1, 5, "Y"], [1, 6, "Y"], [18, 3, "Z"], [18, 4, "Z"], [18, 5, "V"], [18, 6, "V"],
+      [14, 11, "Y"], [15, 11, "Z"], [16, 11, "V"]].forEach(([x, y, t]) => put(x, y, t));
+    put(7, 12, "A");
+    put(9, 13, "E"); put(10, 13, "E");
+    return m;
+  })();
+  let map = townMap, scene = "town";
+  const passable = (x, y) => x >= 0 && y >= 0 && x < MW && y < MH && "GPFHOE".includes(map[y][x]);
 
   // ───── Dialog content ─────
   let people = [];
@@ -862,7 +916,20 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     mk({ x: 29, y: 15, look: DOROTHY, nick: "도로시", kind: "nikke", still: true,
       say: () => [["도로시", "제가 여기 왜 있는거죠...?"]] }),
   ];
-  let npcs = STAFF.slice();
+  // 세미나실에서는 짬뽕순두부bot 셋이 준비에 한창이다. 접수자는 들어오지 않는다.
+  const botLook = (id, b, m) => ({ robot: true, id, pal: Object.assign({}, ROBOT_PAL, { b, m }) });
+  const HALL_NPCS = [
+    mk({ x: 3, y: 4, home: [3, 4], busy: true, look: botLook("bot1", "#e8542c", "#ffd9cc"), nick: "짬뽕순두부bot1", kind: "staff",
+      say: () => [["짬뽕순두부bot1", "삐빅. 피자 배치 중입니다. 네 명당 한 판, 계산 완료."], ["짬뽕순두부bot1", "…한 조각이 비는 것은 기분 탓입니다. 삐빅."]] }),
+    mk({ x: 16, y: 4, home: [16, 4], busy: true, look: botLook("bot2", "#f2c230", "#fff3c4"), nick: "짬뽕순두부bot2", kind: "staff",
+      say: () => [["짬뽕순두부bot2", "맥주 16캔, 콜라, 음료수 냉장 확인. 소주도 준비했습니다."], ["짬뽕순두부bot2", "시음은 하지 않았습니다. 정말입니다. 삐빅."]] }),
+    mk({ x: 11, y: 3, home: [11, 3], busy: true, look: botLook("bot3", "#2f6fe4", "#d5e4ff"), nick: "짬뽕순두부bot3", kind: "staff",
+      say: () => [["짬뽕순두부bot3", "프로젝터 연결 테스트 중. HDMI, USB-C 젠더 모두 있습니다."],
+        ["짬뽕순두부bot3", `발표 ${people.filter((p) => p.type === "talk").length}개의 슬라이드를 기다리는 중. 마감은 11월 27일(금)입니다.`],
+        ["짬뽕순두부bot3", "발표 순서는 전날 자료를 보고 주제가 이어지도록 정합니다. 삐빅."]] }),
+  ];
+  let townNpcs = STAFF.slice();
+  let npcs = townNpcs;
   const all = () => [player, ...npcs];
   const occupied = (x, y, self) => all().some((e) => e !== self && e.x === x && e.y === y);
   const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
@@ -872,7 +939,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const r = rng(hash(seed));
     for (let i = 0; i < 400; i++) {
       const x = 4 + Math.floor(r() * (MW - 8)), y = 13 + Math.floor(r() * (MH - 17));
-      if (passable(x, y) && !occupied(x, y) && !crossSet.has(`${x},${y}`)) return [x, y];
+      if ("GPFH".includes(townMap[y][x]) && !townNpcs.some((n) => n.x === x && n.y === y) && !crossSet.has(`${x},${y}`)) return [x, y];
     }
     return [24, 20];
   }
@@ -886,7 +953,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const nicks = new Set(list.map((p) => p.nick));
     if (me) nicks.add(me);
     const keep = STAFF.filter((s) => !nicks.has(s.nick));
-    const byNick = new Map(npcs.filter((n) => n.kind !== "staff").map((n) => [n.nick, n]));
+    const byNick = new Map(townNpcs.filter((n) => n.kind !== "staff").map((n) => [n.nick, n]));
     const slots = absent.slice(0, CROSS_SLOTS.length).map((a, i) => [a, CROSS_SLOTS[i]]);
     crossSet = new Set(slots.map(([, [x, y]]) => `${x},${y}`));
     for (const [a, [x, y]] of slots) {
@@ -910,7 +977,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       };
       keep.push(n);
     }
-    npcs = keep;
+    townNpcs = keep;
+    if (scene === "town") npcs = townNpcs;
     $("hud-n").textContent = list.length;
     $("hud-me").textContent = !me ? "손님으로 구경 중" : player.data ? `${me} 님으로 걷는 중` : `${me} 님 · 입주 확인 대기 중`;
   }
@@ -935,7 +1003,11 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     e.dir = dir;
     const [dx, dy] = DIRS[dir];
     const nx = e.x + dx, ny = e.y + dy;
-    if (!passable(nx, ny) || occupied(nx, ny, e)) return false;
+    if (!passable(nx, ny) || occupied(nx, ny, e)) {
+      if (e === player && map[ny] && map[ny][nx] === "D") enterHall();
+      return false;
+    }
+    if (e !== player && map[ny][nx] === "E") return false;
     if (e.home && (Math.abs(nx - e.home[0]) > 4 || Math.abs(ny - e.home[1]) > 4)) return false;
     e.fx = e.x; e.fy = e.y; e.x = nx; e.y = ny; e.t = 0; e.ms = ms; e.moving = true; e.alt = !e.alt;
     return true;
@@ -945,12 +1017,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     for (const e of all()) {
       if (e.moving) { e.t = Math.min(1, e.t + dt / e.ms); if (e.t >= 1) e.moving = false; }
     }
+    if (scene === "hall" && !player.moving && map[player.y][player.x] === "E") return leaveHall();
     if (!dialog && !player.moving && held.length) tryMove(player, held[held.length - 1], 170);
     for (const n of npcs) {
       if (n.still || n.moving || n.talking) continue;
       n.wait -= dt;
       if (n.wait > 0) continue;
-      n.wait = 900 + Math.random() * 2800;
+      n.wait = n.busy ? 250 + Math.random() * 900 : 900 + Math.random() * 2800;
       const dir = Object.keys(DIRS)[Math.floor(Math.random() * 4)];
       if (Math.random() < 0.3) n.dir = dir; else tryMove(n, dir, 320);
     }
@@ -958,20 +1031,44 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
 
   const pos = (e) => [(e.fx + (e.x - e.fx) * e.t) * TS, (e.fy + (e.y - e.fy) * e.t) * TS];
 
+  function place(x, y, dir) {
+    Object.assign(player, { x, y, fx: x, fy: y, t: 1, moving: false, dir });
+    held = [];
+  }
+  function enterHall() {
+    scene = "hall"; map = hallMap; MW = HALL_W; MH = HALL_H; npcs = HALL_NPCS;
+    place(10, 12, "up");
+    openDialog([["", "세미나실에 들어왔다. 짬뽕순두부bot들이 세미나 준비에 한창이다."],
+      ["", "입구 옆 이젤에 오늘의 발표 안내가 붙어 있다."]]);
+  }
+  function leaveHall() {
+    scene = "town"; map = townMap; MW = 48; MH = 36; npcs = townNpcs;
+    place(24, 12, "down");
+  }
+
   function render(now) {
     const s = scale;
     const vw = cv.width / s, vh = cv.height / s;
     const [ppx, ppy] = pos(player);
-    const camX = Math.max(0, Math.min(ppx + 8 - vw / 2, MW * TS - vw));
-    const camY = Math.max(0, Math.min(ppy + 8 - vh / 2, MH * TS - vh));
+    // 맵이 화면보다 작으면(세미나실) 가운데에 놓는다.
+    const cam = (p, size, view) => size <= view ? (size - view) / 2 : Math.max(0, Math.min(p + 8 - view / 2, size - view));
+    const camX = cam(ppx, MW * TS, vw), camY = cam(ppy, MH * TS, vh);
     const ox = Math.round(camX * s), oy = Math.round(camY * s);
     ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = "#1b4d26"; ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = scene === "hall" ? "#2a1d14" : "#1b4d26"; ctx.fillRect(0, 0, cv.width, cv.height);
     const f = Math.floor(now / 600) % 2;
-    const x0 = Math.floor(camX / TS), y0 = Math.floor(camY / TS);
+    const x0 = Math.max(0, Math.floor(camX / TS)), y0 = Math.max(0, Math.floor(camY / TS));
     const x1 = Math.min(MW - 1, Math.ceil((camX + vw) / TS)), y1 = Math.min(MH - 1, Math.ceil((camY + vh) / TS));
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
       ctx.drawImage(tile(map[y][x], (x * 7 + y * 13) % 2, f), x * TS * s - ox, y * TS * s - oy, TS * s, TS * s);
+    }
+    if (scene === "hall") { // 스크린 글씨
+      const cx = 10 * TS * s - ox, cy = 1.5 * TS * s - oy;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.font = `700 ${Math.round(4.2 * s)}px "Noto Sans KR", sans-serif`;
+      ctx.fillStyle = "#111"; ctx.fillText("GENERATION IS DONE", cx, cy - 2.2 * s);
+      ctx.font = `700 ${Math.round(2.8 * s)}px "Noto Sans KR", sans-serif`;
+      ctx.fillStyle = "#ff4a1c"; ctx.fillText("제4회 PGR21 AI 세미나 · 11.29 12:00", cx, cy + 2.6 * s);
     }
     const ents = all().map((e) => ({ e, p: pos(e) })).sort((a, b) => a.p[1] - b.p[1]);
     for (const { e, p } of ents) {
@@ -1155,6 +1252,16 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const done = dialog.onClose; dialog = null; done && done();
   }
 
+  // 세미나실 이젤: 시트에 등록된 발표자와 발표 제목을 그대로 안내한다.
+  function talkGuide() {
+    const talks = people.filter((p) => p.type === "talk");
+    const head = ["발표 안내", "제4회 PGR21 AI 세미나 · 11월 29일(일) 12:00 · Generation is Done"];
+    if (!talks.length) return [head, ["발표 안내", "아직 등록된 발표가 없습니다. 첫 발표를 기다리고 있습니다."]];
+    return [head, ["발표 안내", `등록된 발표 ${talks.length}개. 순서는 전날 자료를 보고 주제가 이어지도록 정합니다.`],
+      ...talks.map((p, i) => [`발표 ${String(i + 1).padStart(2, "0")} · ${p.nick}`, `「${p.title || "TBD"}」`]),
+      ["발표 안내", "발표 뒤에는 피자와 함께 토론이 이어집니다."]];
+  }
+
   function act() {
     music.blip();
     if (dialog) return advance();
@@ -1169,8 +1276,14 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     }
     const t = map[ty] && map[ty][tx];
     if (t === "S" && SIGNS[`${tx},${ty}`]) return openDialog(SIGNS[`${tx},${ty}`]());
-    if (t === "D") return openDialog([["", "문이 굳게 잠겨 있다."], ["", "「11월 29일 12:00 개장」이라고 적혀 있다."],
-      ["", player.data ? "입장권은 이미 챙겼다!" : "아래 접수처에서 먼저 입장권을 받아 오자."]]);
+    if (t === "D") return enterHall();
+    if (t === "A") return openDialog(talkGuide());
+    if (t === "K") return openDialog([["스크린", "GENERATION IS DONE"], ["스크린", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 12:00 · 영등포"]]);
+    if (t === "U") return openDialog([["", "연단이다. 마이크에서 「아, 아, 마이크 테스트」 소리가 남아 있는 것 같다."]]);
+    if (t === "C") return openDialog([["", "아직 아무도 앉지 않은 의자다. 29일에는 꽉 찰 것이다."]]);
+    if (t === "Y") return openDialog([["", "피자가 놓여 있다. 아직 따끈하다."], ["", "…29일 전까지 먹으면 안 될 것 같다."]]);
+    if (t === "Z") return openDialog([["", "콜라와 맥주가 줄지어 있다. 맥주는 16캔 준비됐다."]]);
+    if (t === "V") return openDialog([["", "소주와 위스키, 잔이 놓여 있다."], ["", "발표가 끝난 뒤를 위한 것이라고 적혀 있다."]]);
     if (t === "W") return openDialog([["", "물고기는 아직 생성되지 않았다."]]);
     if (t === "J") return openDialog([["개작두", "무언가를 썰기 위한 도구다."]]);
     if (t === "F") return openDialog([["", "꽃이 피어 있다. 사람이 심었는지, 생성됐는지는 알 수 없다."]]);

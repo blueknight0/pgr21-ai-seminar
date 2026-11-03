@@ -816,6 +816,10 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     "34,22": () => [["GAME 수풀", "코드도, 에셋도, NPC 대사도 생성된다."], ["GAME 수풀", "…방금 그 대사도? 그럼 재미는 누가 설계하지?"]],
   };
   const IDLE_LINES = ["생성은 끝났대. 그럼 이제 우린 뭘 하지?", "11월 29일에 여기서 봐!", "오늘은 만들러 온 게 아니라 이야기하러 왔어.", "프롬프트 쓰다 보니 벌써 11월이네.", "발표 듣고 토론까지 하면 배가 고플 거야. 피자 있대."];
+  // 불참자는 광장 십자가에 매달린다. 시트 '불참' 탭에 한마디가 없으면 아래 사죄 문구 중 하나를 말한다.
+  const APOLOGY_LINES = ["불참해서 진심으로 죄송합니다. 여기 매달려 반성하겠습니다.", "29일에 못 가서 정말 죄송합니다… 피자는 제 몫까지 드세요.", "죄인은 할 말이 없습니다. 다음 세미나엔 꼭 가겠습니다.", "여러분 발표 못 들어서 너무 아쉽고 죄송합니다. 자료라도 꼭 보겠습니다."];
+  const CROSS_SLOTS = [[22, 19], [26, 19], [20, 19], [28, 19], [22, 21], [26, 21], [20, 21], [28, 21], [18, 19], [30, 19], [18, 21], [30, 21]];
+  let crossSet = new Set();
 
   // ───── Entities ─────
   const mk = (o) => Object.assign({ dir: "down", fx: o.x, fy: o.y, t: 1, moving: false, alt: false, wait: 500 + Math.random() * 2000 }, o);
@@ -837,12 +841,14 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const r = rng(hash(seed));
     for (let i = 0; i < 400; i++) {
       const x = 4 + Math.floor(r() * (MW - 8)), y = 13 + Math.floor(r() * (MH - 17));
-      if (passable(x, y) && !occupied(x, y)) return [x, y];
+      if (passable(x, y) && !occupied(x, y) && !crossSet.has(`${x},${y}`)) return [x, y];
     }
     return [24, 20];
   }
 
-  function syncPeople(list) {
+  function syncPeople(list, absent = []) {
+    const absentNicks = new Set(absent.map((a) => a.nick));
+    list = list.filter((p) => !absentNicks.has(p.nick));
     people = list;
     player.data = null;
     if (me) { player.nick = me; player.look = lookOf(me); }
@@ -850,6 +856,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     if (me) nicks.add(me);
     const keep = STAFF.filter((s) => !nicks.has(s.nick));
     const byNick = new Map(npcs.filter((n) => n.kind !== "staff").map((n) => [n.nick, n]));
+    const slots = absent.slice(0, CROSS_SLOTS.length).map((a, i) => [a, CROSS_SLOTS[i]]);
+    crossSet = new Set(slots.map(([, [x, y]]) => `${x},${y}`));
+    for (const [a, [x, y]] of slots) {
+      const line = a.line || APOLOGY_LINES[hash(a.nick) % APOLOGY_LINES.length];
+      keep.push(mk({ x, y, look: lookOf(a.nick), nick: a.nick, kind: "absent", still: true, dir: "down",
+        say: () => [[a.nick, line], ["", `${a.nick} 님은 불참한 죄로 광장 십자가에 매달려 있다.`]] }));
+    }
     for (const p of list) {
       if (me && p.nick === me) { player.nick = p.nick; player.look = lookOf(p.nick); player.data = p; continue; }
       let n = byNick.get(p.nick);
@@ -937,6 +950,16 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       const bob = e.moving && e.t < 0.5 ? s : 0;
       ctx.fillStyle = "rgba(0,0,0,0.22)";
       ctx.beginPath(); ctx.ellipse(sx + 8 * s, sy + 14.5 * s, 5 * s, 2 * s, 0, 0, Math.PI * 2); ctx.fill();
+      if (e.kind === "absent") {
+        // 나무 십자가: 기둥과 가로대를 그린 뒤 아바타를 가로대 높이에 매단다. 살짝 흔들린다.
+        const R = (col, x, y, w, h) => { ctx.fillStyle = col; ctx.fillRect(sx + x * s, sy + y * s, w * s, h * s); };
+        R("#4a2e17", 6, -16, 4, 31); R("#7a4f2e", 7, -16, 2, 31);
+        R("#4a2e17", 0, -11, 16, 4); R("#7a4f2e", 0, -10, 16, 2);
+        const sway = Math.round(Math.sin(now / 700 + hash(e.nick)) * 0.6) * s;
+        ctx.drawImage(sprite(e.look, "down", 0), sx + sway, sy - 12 * s, TS * s, TS * s);
+        R("#d9c08a", 1, -10, 2, 2); R("#d9c08a", 13, -10, 2, 2);
+        continue;
+      }
       ctx.drawImage(sprite(e.look, e.dir, frame), sx, sy - 3 * s - bob, TS * s, TS * s);
       if (SPONSORS.has(e.nick)) CROWN.forEach((row, y) => [...row].forEach((ch, x) => {
         if (ch === ".") return;
@@ -949,11 +972,12 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     ctx.font = `700 ${fs}px "Noto Sans KR", sans-serif`;
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     for (const { e, p } of ents) {
-      const cx = Math.round((p[0] + 8) * s) - ox, cy = Math.round((p[1] - (SPONSORS.has(e.nick) ? 6 : 5)) * s) - oy - fs * 0.6;
+      const lift = e.kind === "absent" ? 18 : SPONSORS.has(e.nick) ? 6 : 5;
+      const cx = Math.round((p[0] + 8) * s) - ox, cy = Math.round((p[1] - lift) * s) - oy - fs * 0.6;
       if (cx < -200 || cy < -40 || cx > cv.width + 200 || cy > cv.height + 40) continue;
-      const label = e.kind === "talk" ? "🎤 " + e.nick : e.nick;
+      const label = e.kind === "talk" ? "🎤 " + e.nick : e.kind === "absent" ? e.nick + " · 불참" : e.nick;
       const w = ctx.measureText(label).width + fs;
-      const bg = e.kind === "me" ? "#ffe14a" : e.kind === "talk" ? "#ff4a1c" : e.kind === "staff" ? "#2f6fe4" : "rgba(16,16,22,0.78)";
+      const bg = e.kind === "me" ? "#ffe14a" : e.kind === "talk" ? "#ff4a1c" : e.kind === "staff" ? "#2f6fe4" : e.kind === "absent" ? "#4a2e17" : "rgba(16,16,22,0.78)";
       ctx.fillStyle = bg;
       ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - fs * 0.75, w, fs * 1.5, fs * 0.35); ctx.fill();
       ctx.fillStyle = e.kind === "me" || e.kind === "talk" ? "#111" : "#fff";
@@ -1178,7 +1202,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       const data = await res.json();
       if (!data.ok) return;
       total = data.total || 0; pending = data.pending || 0;
-      syncPeople(data.people || []);
+      syncPeople(data.people || [], data.absent || []);
       renderTalks(); renderCounts();
     } catch (err) { /* 다음 주기에 다시 시도 */ }
   }

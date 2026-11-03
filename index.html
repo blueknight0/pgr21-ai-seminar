@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="2026.11.29(일) 13:00 · 영등포. 데이터, 아트, 게임의 장벽이 무너진 세상에서 우리는 무엇을 해야 하는가. 참가·발표 접수 중.">
+<meta name="description" content="2026.11.29(일) 12:00 · 영등포. 데이터, 아트, 게임의 장벽이 무너진 세상에서 우리는 무엇을 해야 하는가. 참가·발표 접수 중.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PGR21 AI Seminar">
 <meta property="og:url" content="https://blueknight0.github.io/pgr21-ai-seminar/">
 <meta property="og:title" content="제4회 PGR21 AI 세미나 · Generation is Done">
-<meta property="og:description" content="2026.11.29(일) 13:00 · 영등포. 데이터, 아트, 게임의 장벽이 무너진 세상에서 우리는 무엇을 해야 하는가. 참가·발표 접수 중.">
-<meta property="og:image" content="https://blueknight0.github.io/pgr21-ai-seminar/og.png?v=1">
+<meta property="og:description" content="2026.11.29(일) 12:00 · 영등포. 데이터, 아트, 게임의 장벽이 무너진 세상에서 우리는 무엇을 해야 하는가. 참가·발표 접수 중.">
+<meta property="og:image" content="https://blueknight0.github.io/pgr21-ai-seminar/og.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="제4회 PGR21 AI 세미나 · Generation is Done">
-<meta name="twitter:description" content="2026.11.29(일) 13:00 · 영등포. 데이터, 아트, 게임의 장벽이 무너진 세상에서 우리는 무엇을 해야 하는가. 참가·발표 접수 중.">
-<meta name="twitter:image" content="https://blueknight0.github.io/pgr21-ai-seminar/og.png?v=1">
+<meta name="twitter:description" content="2026.11.29(일) 12:00 · 영등포. 데이터, 아트, 게임의 장벽이 무너진 세상에서 우리는 무엇을 해야 하는가. 참가·발표 접수 중.">
+<meta name="twitter:image" content="https://blueknight0.github.io/pgr21-ai-seminar/og.png?v=2">
 <title>Generation is Done</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -384,7 +384,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
 
   <dl class="wrap facts">
     <div><dt class="mono">Date</dt><dd><span class="big">11.29</span><small>2026 · 일요일</small></dd></div>
-    <div><dt class="mono">Start</dt><dd><span class="big">13:00</span><small>시작 예정</small></dd></div>
+    <div><dt class="mono">Start</dt><dd><span class="big">12:00</span><small>시작 예정</small></dd></div>
     <div><dt class="mono">Place</dt><dd><span class="big kr">영등포</span><small>영등포역 인근 · 장소 확정 전</small></dd></div>
     <div><dt class="mono">Seats</dt><dd><span class="big" id="seats">30</span><small id="seats-note">명 내외 · 피자와 음료 제공</small></dd></div>
   </dl>
@@ -539,7 +539,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         <p class="side">발표 자료는 공개에 동의한 최종본만 행사 후 배포합니다.</p>
       </div>
       <ol class="prog">
-        <li class="on"><time>13:00</time><div><b>시작</b><span>입장과 인사 · 예정</span></div></li>
+        <li class="on"><time>12:00</time><div><b>시작</b><span>입장과 인사 · 예정</span></div></li>
         <li><time>TBA</time><div><b>발표 세션</b><span>데이터 · 아트 · 게임 · 발표자 확정 후 공개</span></div></li>
         <li><time>TBA</time><div><b>토론 · Generation is Done</b><span>우리는 무엇을 하고 있고, 무엇을 해야 하는가</span></div></li>
         <li><time>TBA</time><div><b>식사와 마무리</b><span>피자와 음료 · 종료 시각 공지 예정</span></div></li>
@@ -595,7 +595,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
 
   // ───── Ticker ─────
-  const phrases = ["Generation is Done", "2026.11.29 SUN 13:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki · 성야무인", "PGR21 AI Seminar Vol.04"];
+  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki · 성야무인", "PGR21 AI Seminar Vol.04"];
   const set = phrases.map((p) => `<span>${p}</span>`).join("");
   $("ticker").innerHTML = set + set + set + set;
 
@@ -809,7 +809,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   let people = [];
   let me = store.get();
   const SIGNS = {
-    "22,12": () => [["안내판", "GENERATION IS DONE"], ["안내판", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 13:00 · 영등포"]],
+    "22,12": () => [["안내판", "GENERATION IS DONE"], ["안내판", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 12:00 · 영등포"]],
     "32,14": () => [["마을 게시판", `마을 주민 ${people.length}명 · 입주 심사 중 ${pending}명 · 정원 ${CAPACITY}명`], ["마을 게시판", "접수를 마치고 운영진 확인을 받으면 이 마을에 내 아바타가 입주한다고 적혀 있다."]],
     "13,12": () => [["ART 정원", "그림이 몇 초 만에 피어나는 곳."], ["ART 정원", "고르고 버리는 취향도 창작일까?"]],
     "15,22": () => [["DATA 호수", "분석은 한 줄 프롬프트가 됐다."], ["DATA 호수", "그럼 어떤 질문을 던질지는 누가 정하지?"]],
@@ -1114,7 +1114,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     }
     const t = map[ty] && map[ty][tx];
     if (t === "S" && SIGNS[`${tx},${ty}`]) return openDialog(SIGNS[`${tx},${ty}`]());
-    if (t === "D") return openDialog([["", "문이 굳게 잠겨 있다."], ["", "「11월 29일 13:00 개장」이라고 적혀 있다."],
+    if (t === "D") return openDialog([["", "문이 굳게 잠겨 있다."], ["", "「11월 29일 12:00 개장」이라고 적혀 있다."],
       ["", player.data ? "입장권은 이미 챙겼다!" : "아래 접수처에서 먼저 입장권을 받아 오자."]]);
     if (t === "W") return openDialog([["", "물고기는 아직 생성되지 않았다."]]);
     if (t === "F") return openDialog([["", "꽃이 피어 있다. 사람이 심었는지, 생성됐는지는 알 수 없다."]]);

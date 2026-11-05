@@ -172,6 +172,12 @@ h2 { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(2.4
   padding: 6px 10px; border-radius: 4px; font: 700 0.8125rem/1 var(--font-body);
 }
 .snd[aria-pressed="true"] { color: #8a8a90; text-decoration: line-through; }
+.dday {
+  position: absolute; top: 48px; right: 10px; pointer-events: none;
+  background: #ff4a1c; color: #16161a; border: 2px solid #16161a; box-shadow: 0 0 0 2px #fbfaf5;
+  padding: 6px 10px; border-radius: 4px; font: 900 0.8125rem/1 var(--font-body); font-variant-numeric: tabular-nums;
+}
+.dday:empty { display: none; }
 .enter {
   position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; text-align: center;
   background: rgba(10, 12, 16, 0.55); color: #fff; border: 0; width: 100%; cursor: pointer;
@@ -328,6 +334,50 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
 .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--ink); color: var(--muted); font-size: 0.875rem; }
 .foot b { color: var(--ink); }
 
+/* Projector standby screen (?standby): the seminar hall on the left, a poster panel on the right. JS sets --stage-w and --pw (panel width). */
+.standby { display: none; }
+.sb-on, .sb-on body { overflow: hidden; }
+.sb-on body > :not(.standby) { display: none; }
+.sb-on .standby {
+  position: fixed; inset: 0; display: grid; grid-template-columns: var(--stage-w, 66vw) minmax(0, 1fr);
+  background: #0d0d0d; color: #f2f0ea; --pw: 34vw;
+}
+.sb-on .standby.tall { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+.sb-on .game { border: 0; background: #0d0d0d; }
+.sb-on .game > :not(canvas) { display: none; }
+.sb-panel {
+  min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: clamp(10px, 2.2vh, 26px);
+  padding: clamp(18px, 4.4vh, 52px) calc(var(--pw) * 0.07); border-left: 1px solid rgba(242, 240, 234, 0.18);
+}
+.standby.tall .sb-panel { border-left: 0; border-top: 1px solid rgba(242, 240, 234, 0.18); }
+.sb-panel p { margin: 0; }
+.sb-meta { display: flex; justify-content: space-between; color: #a9a69d; font-size: max(0.75rem, calc(var(--pw) * 0.022)); }
+.sb-title {
+  font-family: var(--font-num); font-weight: 900; font-stretch: 68%; font-variation-settings: "wdth" 68;
+  font-size: min(calc(var(--pw) * 0.16), 13vh); line-height: 0.86; letter-spacing: -0.02em; text-transform: uppercase; white-space: nowrap;
+}
+.sb-title .out { color: transparent; -webkit-text-stroke: 2px #f2f0ea; }
+.sb-title .acc { color: var(--accent); }
+.sb-sub { font-weight: 700; font-size: max(0.875rem, calc(var(--pw) * 0.036)); }
+.sb-clock { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.5em; }
+.sb-clock b {
+  font-family: var(--font-num); font-weight: 800; font-stretch: 72%; font-variant-numeric: tabular-nums;
+  font-size: min(calc(var(--pw) * 0.25), 17vh); line-height: 0.9; letter-spacing: -0.02em;
+}
+.sb-clock span { color: var(--accent); font-weight: 900; font-size: max(1rem, calc(var(--pw) * 0.052)); }
+.sb-quote {
+  flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 0.6em;
+  border-block: 1px solid rgba(242, 240, 234, 0.18); padding-block: clamp(10px, 2.2vh, 26px); transition: opacity .35s;
+}
+.sb-quote.swap { opacity: 0; }
+.sb-who { background: #ffe14a; color: #0d0d0d; padding: 0.1em 0.55em; font-weight: 900; font-size: clamp(1rem, calc(var(--pw) * 0.05), 2.2rem); }
+.sb-quote p { font-family: var(--font-kr-display); font-size: clamp(1.3rem, calc(var(--pw) * 0.08), 3.8rem); line-height: 1.2; letter-spacing: -0.02em; }
+.sb-quote small { color: #a9a69d; font-weight: 700; font-size: max(0.8125rem, calc(var(--pw) * 0.034)); line-height: 1.4; }
+.sb-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; color: #a9a69d; font-size: max(0.8125rem, calc(var(--pw) * 0.03)); }
+.sb-foot b { color: #f2f0ea; }
+.sb-hint { color: #a9a69d; font-size: 0.6875rem; animation: sb-hint 14s forwards; }
+@keyframes sb-hint { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
+
 @media (max-width: 900px) {
   .stage, .signup { grid-template-columns: minmax(0, 1fr); }
   .matrix-box { max-width: 420px; }
@@ -439,6 +489,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         <div class="hud"><span>주민 <b id="hud-n">0</b> / <span id="hud-cap" style="all:unset">30</span></span><span id="hud-me">손님으로 구경 중</span></div>
         <div class="dlg" id="dlg" aria-live="polite"><span class="who" id="dlg-who"></span><span id="dlg-text"></span><span class="more" id="dlg-more">▼</span></div>
         <button class="snd" id="snd" type="button" aria-pressed="false">♪ 음악</button>
+        <span class="dday" id="hud-dday"></span>
         <button class="enter" id="enter" type="button">▶ 마을에 들어가기<small>방향키 이동 · Z / 스페이스 말 걸기 · ♪ 소리 있음</small></button>
       </div>
       <div class="pad" aria-hidden="true">
@@ -570,15 +621,49 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     <div class="foot">
       <span><b>운영</b> 짬뽕순두부(방장) · Tiny(부방장)</span>
       <span>일정·장소·금액은 예정이며 확정되는 대로 갱신합니다.</span>
+      <span><a href="?standby">프로젝터 대기 화면</a></span>
     </div>
   </div>
 </footer>
+
+<!-- 프로젝터 대기 화면. 주소에 ?standby 를 붙이면 이것만 보인다. 세미나실 캔버스(#game)는 스크립트가 #sb-stage로 옮긴다. -->
+<div class="standby" id="standby">
+  <div id="sb-stage"></div>
+  <aside class="sb-panel">
+    <p class="mono sb-meta"><span>PGR21</span><span>AI Seminar</span><span>Vol.04</span></p>
+    <p class="sb-title">Generation<br><span class="out">is</span> <span class="acc">Done.</span></p>
+    <p class="sb-sub">제4회 PGR21 AI 세미나 · 11.29 일요일 12:00 · 영등포</p>
+    <p class="sb-clock"><b id="sb-clock">--:--</b><span id="sb-status"></span></p>
+    <div class="sb-quote swap" id="sb-quote"><span class="sb-who" id="sb-who"></span><p id="sb-line"></p><small id="sb-talk"></small></div>
+    <p class="sb-foot"><span>참가 <b id="sb-n">0</b>명 · 발표 <b id="sb-t">0</b>개</span><span id="sb-sponsors"></span></p>
+    <p class="mono sb-hint">클릭 음악 · M 음소거 · F 전체 화면 · Esc 나가기</p>
+  </aside>
+</div>
 
 <script>
   // 구글 시트 Apps Script 웹 앱 URL(https://script.google.com/macros/s/.../exec)을 넣으면 접수와 마을이 켜집니다.
   const API = "https://script.google.com/macros/s/AKfycby2thnrAsB3lXAdyqIEJKXESlJclmfVX8HXLsqS_uclpjsfR-p5HNMdqfYlZxdXuj72/exec";
   const CAPACITY = 30;
   const ME_KEY = "pgr21-ai4-me";
+
+  // 시간 연출은 한국 시각 기준이다. 주소에 ?date=2026-11-28T21:00 을 붙이면 그 시각인 것처럼 미리 볼 수 있다.
+  const qs = new URLSearchParams(location.search);
+  const KST = 9 * 3600e3, DAY = 864e5;
+  const EVENT = Date.parse("2026-11-29T12:00:00+09:00");
+  const fakeAt = /^(\d{4}-\d\d-\d\d)(?:T(\d\d:\d\d))?$/.exec(qs.get("date") || "");
+  const fakeBy = fakeAt ? (Date.parse(`${fakeAt[1]}T${fakeAt[2] || "12:00"}:00+09:00`) - Date.now()) || 0 : 0;
+  const clock = () => Date.now() + fakeBy;
+  const kstDay = (t) => Math.floor((t + KST) / DAY);
+  const dday = () => kstDay(EVENT) - kstDay(clock()); // 0이면 세미나 당일
+  const standby = qs.has("standby");                  // 프로젝터 대기 화면
+  const seatedNow = () => standby || dday() <= 1;     // 전날부터 주민은 세미나실 의자에 앉아 있다
+  // 한국 시각 → 마을에 곱하는 하늘빛. 낮은 흰색(변화 없음), 해 뜰 녘과 질 녘은 주황, 밤은 남색.
+  const SKY = [[0, 100, 112, 186], [5, 100, 112, 186], [6.5, 255, 196, 160], [8, 255, 255, 255], [16.5, 255, 255, 255], [18, 255, 178, 128], [19.5, 100, 112, 186], [24, 100, 112, 186]];
+  function skyColor() {
+    const h = ((clock() + KST) % DAY) / 3600e3;
+    const i = SKY.findIndex((k) => k[0] > h), a = SKY[i - 1], b = SKY[i], t = (h - a[0]) / (b[0] - a[0]);
+    return [1, 2, 3].map((c) => Math.round(a[c] + (b[c] - a[c]) * t));
+  }
 
   const $ = (id) => document.getElementById(id);
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -808,9 +893,10 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       case "K": // 스크린. 글씨는 render에서 위에 쓴다.
         R("#e8dcc4", 0, 0, 16, 16); R("#3a3a40", 0, 1, 16, 14); R("#f4f8ff", 0, 2, 16, 12); R("#dfe8f6", 0, 11, 16, 3);
         break;
-      case "C":
-        floor(); R("#2a2a33", 4, 2, 8, 6); R("#3d5fc8", 5, 3, 6, 4); R("#2a2a33", 3, 8, 10, 3); R("#4f72d8", 4, 8, 8, 2);
-        R("#2a2a33", 4, 11, 1, 4); R("#2a2a33", 11, 11, 1, 4);
+      case "C": // 스크린 쪽(위)을 보는 의자. 뒤에서 본 모습이라 등받이가 앞에 온다.
+        floor(); R("#2a2a33", 3, 4, 10, 6); R("#4f72d8", 4, 5, 8, 4);
+        R("#2a2a33", 3, 9, 10, 4); R("#3d5fc8", 4, 10, 8, 2); R("#5a7de0", 4, 10, 8, 1);
+        R("#2a2a33", 4, 13, 1, 2); R("#2a2a33", 11, 13, 1, 2);
         break;
       case "U":
         floor(); R("#3e2816", 3, 5, 10, 11); R("#7a4f2e", 4, 6, 8, 9); R("#ff4a1c", 6, 9, 4, 2);
@@ -847,6 +933,16 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     tileCache.set(key, c);
     return c;
   }
+  // 길바닥에 떨어진 입장권. 왼쪽은 본권, 오른쪽은 절취선 너머 반쪽.
+  const ticketArt = (() => {
+    const rows = ["..kkkkkkkkkkkk..", ".kooooooookwwwk.", ".koOOOOOookwwwk.", "..kooooooo.wwk..", ".koOOOOoookwwwk.", ".kooooooookwwwk.", "..kkkkkkkkkkkk.."];
+    const pal = { k: "#1e1e26", o: "#ff4a1c", O: "#a82e10", w: "#fff3e0" };
+    const c = document.createElement("canvas");
+    c.width = 16; c.height = rows.length;
+    const g = c.getContext("2d");
+    rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== ".") { g.fillStyle = pal[ch]; g.fillRect(x, y, 1, 1); } }));
+    return c;
+  })();
 
   // ───── Map ─────
   let MW = 48, MH = 36;
@@ -893,7 +989,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   let me = store.get();
   const SIGNS = {
     "22,12": () => [["안내판", "GENERATION IS DONE"], ["안내판", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 12:00 · 영등포"]],
-    "32,14": () => [["마을 게시판", `마을 주민 ${people.length}명 · 입주 심사 중 ${pending}명 · 정원 ${CAPACITY}명`], ["마을 게시판", "접수를 마치고 운영진 확인을 받으면 이 마을에 내 아바타가 입주한다고 적혀 있다."]],
+    "32,14": () => [["마을 게시판", `마을 주민 ${people.length}명 · 입주 심사 중 ${pending}명 · 정원 ${CAPACITY}명`], ["마을 게시판", ddayLine()], ["마을 게시판", "접수를 마치고 운영진 확인을 받으면 이 마을에 내 아바타가 입주한다고 적혀 있다."]],
     "13,12": () => [["ART 정원", "그림이 몇 초 만에 피어나는 곳."], ["ART 정원", "고르고 버리는 취향도 창작일까?"]],
     "15,22": () => [["DATA 호수", "분석은 한 줄 프롬프트가 됐다."], ["DATA 호수", "그럼 어떤 질문을 던질지는 누가 정하지?"]],
     "34,22": () => [["GAME 수풀", "코드도, 에셋도, NPC 대사도 생성된다."], ["GAME 수풀", "…방금 그 대사도? 그럼 재미는 누가 설계하지?"]],
@@ -903,6 +999,27 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   const APOLOGY_LINES = ["불참해서 진심으로 죄송합니다. 여기 매달려 반성하겠습니다.", "29일에 못 가서 정말 죄송합니다… 피자는 제 몫까지 드세요.", "죄인은 할 말이 없습니다. 다음 세미나엔 꼭 가겠습니다.", "여러분 발표 못 들어서 너무 아쉽고 죄송합니다. 자료라도 꼭 보겠습니다."];
   const CROSS_SLOTS = [[22, 19], [26, 19], [20, 19], [28, 19], [22, 21], [26, 21], [20, 21], [28, 21], [18, 19], [30, 19], [18, 21], [30, 21]];
   let crossSet = new Set();
+  const ddayLine = () => {
+    const d = dday();
+    return d > 1 ? `세미나까지 ${d}일 남았다. 11월 29일 일요일 12:00 시작.` : d === 1 ? "세미나가 내일이다. 주민들은 벌써 세미나실에 자리를 잡았다."
+      : d === 0 ? "오늘이 세미나 날이다. 12:00 시작." : "세미나는 끝났다. 다음 세미나에서 또 만나자.";
+  };
+  // 세미나 전날부터 주민은 세미나실 객석에 앉는다. 앞줄부터, 줄 안에서는 가운데 통로 쪽부터 채우고 의자가 모자라면 뒤에 선다.
+  const SEATS = [5, 7, 9].flatMap((y) => [8, 11, 7, 12, 6, 13, 5, 14, 4, 15, 3, 16].map((x) => [x, y]));
+  const STANDING = [[12, 11], [13, 11], [6, 11], [5, 11], [4, 11], [3, 11], [2, 11]];
+  let mySeat = null;   // 내 자리(비워 둔다)
+  let featured = null; // 대기 화면에서 지금 소개 중인 주민 { nick, at }
+  // 길바닥의 입장권: 남은 자리 수만큼 앞에서부터 놓인다. 말을 걸거나 처음 부딪히면 접수처를 안내한다.
+  const TICKET_SPOTS = [[21, 16], [27, 17], [24, 18], [19, 14], [30, 16], [15, 17], [34, 17], [24, 24], [10, 17], [38, 17], [24, 28], [6, 17]];
+  let seatsLeft = 0, tickets = [], ticketSeen = false;
+  const ticketLines = () => {
+    ticketSeen = true;
+    return me
+      ? [["", "길바닥에 입장권이 떨어져 있다."], ["", `내 입장권은 이미 챙겼다. 남은 ${seatsLeft}장은 다른 사람 몫으로 두자.`]]
+      : [["", "길바닥에 입장권이 떨어져 있다. 아직 이름이 적혀 있지 않다."],
+        ["입장권", `제4회 PGR21 AI 세미나 · 11월 29일(일) 12:00 · 남은 자리 ${seatsLeft}장`],
+        ["", "참가 신청은 이 웹페이지 아래쪽 접수처에서 받는다. 거기서 이름을 적으면 내 것이 된다."]];
+  };
 
   // ───── Entities ─────
   const mk = (o) => Object.assign({ dir: "down", fx: o.x, fy: o.y, t: 1, moving: false, alt: false, wait: 500 + Math.random() * 2000 }, o);
@@ -910,9 +1027,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   // 기본 NPC. 같은 닉네임의 접수자가 마을에 입주하면 이 NPC는 빠지고 접수자 아바타만 남는다.
   const STAFF = [
     mk({ x: 22, y: 13, look: lookOf("짬뽕순두부"), nick: "짬뽕순두부", kind: "staff", still: true,
-      say: () => [["짬뽕순두부", "어서 와! 이번 주제는 Generation is Done이야."], ["짬뽕순두부", "만드는 건 쉬워졌어. 그다음 이야기를 해 보자고."]] }),
+      say: () => seatedNow()
+        ? [["짬뽕순두부", "다들 벌써 세미나실에 들어가 앉아 있어."], ["짬뽕순두부", "저 문으로 들어가 봐. 네 자리도 있을지 몰라."]]
+        : [["짬뽕순두부", "어서 와! 이번 주제는 Generation is Done이야."], ["짬뽕순두부", "만드는 건 쉬워졌어. 그다음 이야기를 해 보자고."]] }),
     mk({ x: 26, y: 13, look: ROBOT, nick: "Tinybot", kind: "staff", still: true,
-      say: () => [["Tinybot", "삐빅. 안녕하세요. 안내 로봇 Tinybot입니다."], ["Tinybot", "발표하고 싶은 이야기가 있다면 아래 접수처에서 발표 참가를 선택하세요."], ["Tinybot", "생성은 끝났습니다. 하지만 이야기는 아직입니다. 삐빅."]] }),
+      say: () => seatedNow()
+        ? [["Tinybot", "삐빅. 주민 전원 세미나실 착석 확인."], ["Tinybot", "입구는 바로 저 문입니다. 생성은 끝났습니다. 이제 이야기할 시간입니다. 삐빅."]]
+        : [["Tinybot", "삐빅. 안녕하세요. 안내 로봇 Tinybot입니다."], ["Tinybot", "발표하고 싶은 이야기가 있다면 아래 접수처에서 발표 참가를 선택하세요."], ["Tinybot", "생성은 끝났습니다. 하지만 이야기는 아직입니다. 삐빅."]] }),
     mk({ x: 29, y: 15, look: DOROTHY, nick: "도로시", kind: "nikke", still: true,
       say: () => [["도로시", "제가 여기 왜 있는거죠...?"]] }),
   ];
@@ -929,8 +1050,9 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         ["짬뽕순두부bot3", "발표 순서는 전날 자료를 보고 주제가 이어지도록 정합니다. 삐빅."]] }),
   ];
   let townNpcs = STAFF.slice();
+  let hallNpcs = HALL_NPCS;
   let npcs = townNpcs;
-  const all = () => [player, ...npcs];
+  const all = () => (standby ? npcs : [player, ...npcs]); // 대기 화면에는 조작 캐릭터가 없다
   const occupied = (x, y, self) => all().some((e) => e !== self && e.x === x && e.y === y);
   const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
   const OPP = { up: "down", down: "up", left: "right", right: "left" };
@@ -939,10 +1061,18 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const r = rng(hash(seed));
     for (let i = 0; i < 400; i++) {
       const x = 4 + Math.floor(r() * (MW - 8)), y = 13 + Math.floor(r() * (MH - 17));
-      if ("GPFH".includes(townMap[y][x]) && !townNpcs.some((n) => n.x === x && n.y === y) && !crossSet.has(`${x},${y}`)) return [x, y];
+      if ("GPFH".includes(townMap[y][x]) && !townNpcs.some((n) => n.x === x && n.y === y) && !crossSet.has(`${x},${y}`)
+        && !tickets.some((t) => t.x === x && t.y === y)) return [x, y];
     }
     return [24, 20];
   }
+
+  const residentSay = (p) => () => {
+    const lines = [[p.nick, p.line || IDLE_LINES[hash(p.nick) % IDLE_LINES.length]]];
+    if (p.type === "talk") lines.push([p.nick, `11월 29일에 「${p.title || "TBD"}」 발표를 할 거야.`]);
+    lines.push(["", `${p.nick} · 주민 번호 #${String(p.seat).padStart(2, "0")}${p.status === "대기" ? " · 대기 중" : ""}`]);
+    return lines;
+  };
 
   function syncPeople(list, absent = []) {
     const absentNicks = new Set(absent.map((a) => a.nick));
@@ -953,7 +1083,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const nicks = new Set(list.map((p) => p.nick));
     if (me) nicks.add(me);
     const keep = STAFF.filter((s) => !nicks.has(s.nick));
-    const byNick = new Map(townNpcs.filter((n) => n.kind !== "staff").map((n) => [n.nick, n]));
+    const byNick = new Map(townNpcs.filter((n) => n.data).map((n) => [n.nick, n]));
     const slots = absent.slice(0, CROSS_SLOTS.length).map((a, i) => [a, CROSS_SLOTS[i]]);
     crossSet = new Set(slots.map(([, [x, y]]) => `${x},${y}`));
     for (const [a, [x, y]] of slots) {
@@ -961,24 +1091,40 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       keep.push(mk({ x, y, look: lookOf(a.nick), nick: a.nick, kind: "absent", still: true, dir: "down",
         say: () => [[a.nick, line], ["", `${a.nick} 님은 불참한 죄로 광장 십자가에 매달려 있다.`]] }));
     }
+    // 입장권은 남은 자리 수만큼 둔다. 세미나가 시작되면 치운다.
+    const want = clock() < EVENT ? Math.min(seatsLeft, TICKET_SPOTS.length) : 0;
+    tickets.length = Math.min(tickets.length, want);
+    for (const [x, y] of TICKET_SPOTS) {
+      if (tickets.length >= want) break;
+      if (townNpcs.some((n) => n.x === x && n.y === y) || (scene === "town" && player.x === x && player.y === y)) continue;
+      tickets.push(mk({ x, y, kind: "ticket", nick: "", still: true, tilt: tickets.length % 2 ? -1 : 1, say: ticketLines }));
+    }
+    keep.push(...tickets);
+    const seated = seatedNow();
     for (const p of list) {
-      if (me && p.nick === me) { player.nick = p.nick; player.look = lookOf(p.nick); player.data = p; continue; }
+      if (!standby && me && p.nick === me) { player.nick = p.nick; player.look = lookOf(p.nick); player.data = p; continue; }
+      if (seated) continue; // 마을이 아니라 세미나실에 앉아 있다
       let n = byNick.get(p.nick);
       if (!n) {
         const [x, y] = spawnSpot(p.nick);
         n = mk({ x, y, home: [x, y], look: lookOf(p.nick), nick: p.nick });
       }
-      n.kind = p.type; n.data = p;
-      n.say = () => {
-        const lines = [[p.nick, p.line || IDLE_LINES[hash(p.nick) % IDLE_LINES.length]]];
-        if (p.type === "talk") lines.push([p.nick, `11월 29일에 「${p.title || "TBD"}」 발표를 할 거야.`]);
-        lines.push(["", `${p.nick} · 주민 번호 #${String(p.seat).padStart(2, "0")}${p.status === "대기" ? " · 대기 중" : ""}`]);
-        return lines;
-      };
+      n.kind = p.type; n.data = p; n.say = residentSay(p);
       keep.push(n);
     }
     townNpcs = keep;
-    if (scene === "town") npcs = townNpcs;
+    // 객석 배치: 발표자를 앞줄에 앉히고 내 자리는 비워 둔다.
+    const wasSeated = new Map(hallNpcs.filter((n) => n.data).map((n) => [n.nick, n]));
+    hallNpcs = HALL_NPCS.slice(); mySeat = null;
+    if (seated) list.slice().sort((a, b) => (b.type === "talk") - (a.type === "talk") || a.seat - b.seat).forEach((p, i) => {
+      const at = SEATS[i] || STANDING[i - SEATS.length];
+      if (!at) return;
+      if (player.data === p) { mySeat = i < SEATS.length ? at : null; return; }
+      const n = wasSeated.get(p.nick) || mk({ x: at[0], y: at[1], look: lookOf(p.nick), nick: p.nick, still: true, dir: "up", wait: 2000 + Math.random() * 14000 });
+      Object.assign(n, { x: at[0], y: at[1], fx: at[0], fy: at[1], seated: i < SEATS.length, kind: p.type, data: p, say: residentSay(p) });
+      hallNpcs.push(n);
+    });
+    npcs = scene === "town" ? townNpcs : hallNpcs;
     $("hud-n").textContent = list.length;
     $("hud-me").textContent = !me ? "손님으로 구경 중" : player.data ? `${me} 님으로 걷는 중` : `${me} 님 · 입주 확인 대기 중`;
   }
@@ -987,9 +1133,21 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   // ───── Game loop ─────
   const game = $("game"), cv = $("cv"), ctx = cv.getContext("2d");
   let scale = 3, dpr = 1, active = false, held = [], dialog = null;
+  if (standby) { document.documentElement.classList.add("sb-on"); $("sb-stage").append(game); game.classList.add("on"); }
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (standby) { // 세미나실 전체가 정수 배율로 들어가게 맞추고, 남는 폭은 안내 패널에 준다. 세로로 긴 화면에서는 위아래로 쌓는다.
+      const W = innerWidth * dpr, H = innerHeight * dpr, tall = innerWidth < innerHeight * 1.25;
+      scale = Math.max(1, Math.floor(tall ? W / (HALL_W * TS) : Math.min((W - 300 * dpr) / (HALL_W * TS), H / (HALL_H * TS))));
+      const w = tall ? innerWidth : (HALL_W * TS * scale) / dpr, h = tall ? (HALL_H * TS * scale) / dpr : innerHeight;
+      const sb = $("standby");
+      sb.classList.toggle("tall", tall);
+      sb.style.setProperty("--stage-w", w + "px"); sb.style.setProperty("--pw", (tall ? innerWidth : innerWidth - w) + "px");
+      cv.style.height = h + "px";
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      return;
+    }
     const w = game.clientWidth;
     const h = Math.min(Math.round(w * 0.62), Math.round(innerHeight * 0.72));
     cv.style.height = h + "px";
@@ -998,6 +1156,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     scale = Math.max(2, Math.round(cv.width / (tilesAcross * TS)));
   }
   new ResizeObserver(resize).observe(game);
+  if (standby) addEventListener("resize", resize);
 
   function tryMove(e, dir, ms) {
     e.dir = dir;
@@ -1005,6 +1164,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const nx = e.x + dx, ny = e.y + dy;
     if (!passable(nx, ny) || occupied(nx, ny, e)) {
       if (e === player && map[ny] && map[ny][nx] === "D") enterHall();
+      // 입장권에 처음 부딪히면 말을 걸지 않아도 안내가 뜬다.
+      else if (e === player && !ticketSeen && npcs.some((n) => n.kind === "ticket" && n.x === nx && n.y === ny)) { held = []; openDialog(ticketLines()); }
       return false;
     }
     if (e !== player && map[ny][nx] === "E") return false;
@@ -1020,6 +1181,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     if (scene === "hall" && !player.moving && map[player.y][player.x] === "E") return leaveHall();
     if (!dialog && !player.moving && held.length) tryMove(player, held[held.length - 1], 170);
     for (const n of npcs) {
+      if (n.seated && !n.talking) { // 앉은 주민은 스크린을 보다가 가끔 옆을 돌아본다
+        n.wait -= dt;
+        if (n.wait <= 0) {
+          n.dir = n.dir === "up" ? (Math.random() < 0.5 ? "left" : "right") : "up";
+          n.wait = n.dir === "up" ? 4000 + Math.random() * 12000 : 500 + Math.random() * 900;
+        }
+      }
       if (n.still || n.moving || n.talking) continue;
       n.wait -= dt;
       if (n.wait > 0) continue;
@@ -1035,16 +1203,20 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     Object.assign(player, { x, y, fx: x, fy: y, t: 1, moving: false, dir });
     held = [];
   }
-  function enterHall() {
-    scene = "hall"; map = hallMap; MW = HALL_W; MH = HALL_H; npcs = HALL_NPCS;
+  function showHall() {
+    scene = "hall"; map = hallMap; MW = HALL_W; MH = HALL_H; npcs = hallNpcs;
     place(10, 12, "up");
-    openDialog([["", "세미나실에 들어왔다. 짬뽕순두부bot들이 세미나 준비에 한창이다."],
+  }
+  function enterHall() {
+    showHall();
+    openDialog([["", seatedNow() ? "세미나실에 들어왔다. 주민들이 벌써 자리를 잡고 앉아 있다." : "세미나실에 들어왔다. 짬뽕순두부bot들이 세미나 준비에 한창이다."],
       ["", "입구 옆 이젤에 오늘의 발표 안내가 붙어 있다."]]);
   }
   function leaveHall() {
     scene = "town"; map = townMap; MW = 48; MH = 36; npcs = townNpcs;
     place(24, 12, "down");
   }
+  if (seatedNow()) showHall(); // 전날부터는 주민들이 앉아 있는 세미나실에서 시작한다
 
   function render(now) {
     const s = scale;
@@ -1055,7 +1227,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const camX = cam(ppx, MW * TS, vw), camY = cam(ppy, MH * TS, vh);
     const ox = Math.round(camX * s), oy = Math.round(camY * s);
     ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = scene === "hall" ? "#2a1d14" : "#1b4d26"; ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = standby ? "#0d0d0d" : scene === "hall" ? "#2a1d14" : "#1b4d26"; ctx.fillRect(0, 0, cv.width, cv.height);
     const f = Math.floor(now / 600) % 2;
     const x0 = Math.max(0, Math.floor(camX / TS)), y0 = Math.max(0, Math.floor(camY / TS));
     const x1 = Math.min(MW - 1, Math.ceil((camX + vw) / TS)), y1 = Math.min(MH - 1, Math.ceil((camY + vh) / TS));
@@ -1074,10 +1246,28 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     for (const { e, p } of ents) {
       const sx = Math.round(p[0] * s) - ox, sy = Math.round(p[1] * s) - oy;
       if (sx < -TS * s * 2 || sy < -TS * s * 2 || sx > cv.width + TS * s || sy > cv.height + TS * s) continue;
+      if (e.kind === "ticket") {
+        // 입장권: 위아래 줄을 반대로 밀어 비스듬히 놓고, 살짝 들썩이며 가끔 반짝인다.
+        ctx.fillStyle = "rgba(0,0,0,0.22)";
+        ctx.beginPath(); ctx.ellipse(sx + 8 * s, sy + 12.5 * s, 6 * s, 1.5 * s, 0, 0, Math.PI * 2); ctx.fill();
+        const up = Math.floor(now / 600 + e.x) % 2 ? s : 0;
+        [[0, 2, e.tilt], [2, 3, 0], [5, 2, -e.tilt]].forEach(([y, h, dx]) =>
+          ctx.drawImage(ticketArt, 0, y, 16, h, sx + dx * s, sy + (5 + y) * s - up, TS * s, h * s));
+        const tw = Math.floor(now / 220 + e.x * 3) % 7;
+        if (tw < 2) {
+          ctx.fillStyle = "#fff"; ctx.fillRect(sx + 13 * s, sy + 3 * s - up, s, s);
+          if (tw) { ctx.fillRect(sx + 12 * s, sy + 3 * s - up, 3 * s, s); ctx.fillRect(sx + 13 * s, sy + 2 * s - up, s, 3 * s); }
+        }
+        continue;
+      }
+      // 대기 화면에서 소개 중인 주민은 뒤를 돌아보며 자리에서 두어 번 들썩인다.
+      const feat = featured && e.seated && e.nick === featured.nick ? now - featured.at : -1;
       const frame = e.moving ? (e.t < 0.5 ? (e.alt ? 1 : 2) : 0) : 0;
-      const bob = e.moving && e.t < 0.5 ? s : 0;
-      ctx.fillStyle = "rgba(0,0,0,0.22)";
-      ctx.beginPath(); ctx.ellipse(sx + 8 * s, sy + 14.5 * s, 5 * s, 2 * s, 0, 0, Math.PI * 2); ctx.fill();
+      const bob = feat >= 0 ? Math.round(Math.abs(Math.sin(feat / 240)) * Math.max(0, 1 - feat / 1500) * 3) * s : e.moving && e.t < 0.5 ? s : 0;
+      if (!e.seated) {
+        ctx.fillStyle = "rgba(0,0,0,0.22)";
+        ctx.beginPath(); ctx.ellipse(sx + 8 * s, sy + 14.5 * s, 5 * s, 2 * s, 0, 0, Math.PI * 2); ctx.fill();
+      }
       if (e.kind === "absent") {
         // 나무 십자가: 기둥과 가로대를 그린 뒤 아바타를 가로대 높이에 매단다. 살짝 흔들린다.
         const R = (col, x, y, w, h) => { ctx.fillStyle = col; ctx.fillRect(sx + x * s, sy + y * s, w * s, h * s); };
@@ -1088,29 +1278,66 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         R("#d9c08a", 1, -10, 2, 2); R("#d9c08a", 13, -10, 2, 2);
         continue;
       }
-      ctx.drawImage(sprite(e.look, e.dir, frame), sx, sy - 3 * s - bob, TS * s, TS * s);
+      // 앉은 주민은 상반신만 그리고, 의자 등받이를 그 위에 다시 덮는다.
+      if (e.seated) ctx.drawImage(sprite(e.look, feat >= 0 ? "down" : e.dir, 0), 0, 0, 16, 13, sx, sy - 3 * s - bob, TS * s, 13 * s);
+      else ctx.drawImage(sprite(e.look, e.dir, frame), sx, sy - 3 * s - bob, TS * s, TS * s);
       if (SPONSORS.has(e.nick)) CROWN.forEach((row, y) => [...row].forEach((ch, x) => {
         if (ch === ".") return;
         ctx.fillStyle = CROWN_PAL[ch];
         ctx.fillRect(sx + (4 + x) * s, sy + (y - 4) * s - bob, s, s);
       }));
+      if (e.seated) ctx.drawImage(tile("C", (e.x * 7 + e.y * 13) % 2, f), 0, 9, 16, 7, sx, sy + 9 * s, TS * s, 7 * s);
       if (!e.moving && map[e.y][e.x] === "H") ctx.drawImage(tile("H", 0, f), 0, 10, 16, 6, sx, sy + 10 * s, TS * s, 6 * s);
     }
-    const fs = Math.round(13 * dpr);
+    if (scene === "town") { // 한국 시각에 맞춰 노을이 지고 밤이 온다. 어두워지면 건물 창과 문 앞에 불빛이 번진다.
+      const [r, g, b] = skyColor();
+      const lit = Math.min(1, (1 - (r + g + b) / 765) / 0.4);
+      if (lit > 0.02) {
+        ctx.globalCompositeOperation = "multiply";
+        ctx.fillStyle = `rgb(${r},${g},${b})`; ctx.fillRect(0, 0, cv.width, cv.height);
+        ctx.globalCompositeOperation = "lighter";
+        [[21.5, 10.5, 2.6, 0.5], [27.5, 10.5, 2.6, 0.5], [24.5, 12.3, 2, 0.35]].forEach(([tx, ty, rad, a]) => {
+          const gx = tx * TS * s - ox, gy = ty * TS * s - oy, gr = rad * TS * s;
+          const glow = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr);
+          glow.addColorStop(0, `rgba(255,190,90,${a * lit})`); glow.addColorStop(1, "rgba(255,190,90,0)");
+          ctx.fillStyle = glow; ctx.fillRect(gx - gr, gy - gr, gr * 2, gr * 2);
+        });
+        ctx.globalCompositeOperation = "source-over";
+        for (const wx of [21, 27]) { // 창 유리
+          const px = wx * TS * s - ox, py = 10 * TS * s - oy;
+          ctx.fillStyle = `rgba(255,224,130,${0.92 * lit})`; ctx.fillRect(px + 4 * s, py + 4 * s, 8 * s, 7 * s);
+          ctx.fillStyle = `rgba(90,74,58,${lit})`; ctx.fillRect(px + 7 * s, py + 4 * s, s, 7 * s); ctx.fillRect(px + 4 * s, py + 7 * s, 8 * s, s);
+        }
+      }
+    }
+    const fs = standby ? Math.round(5 * s) : Math.round(13 * dpr);
     ctx.font = `700 ${fs}px "Noto Sans KR", sans-serif`;
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    for (const { e, p } of ents) {
-      const lift = e.kind === "absent" ? 18 : SPONSORS.has(e.nick) ? 6 : 5;
-      const cx = Math.round((p[0] + 8) * s) - ox, cy = Math.round((p[1] - lift) * s) - oy - fs * 0.6;
-      if (cx < -200 || cy < -40 || cx > cv.width + 200 || cy > cv.height + 40) continue;
-      const label = e.kind === "talk" ? "🎤 " + e.nick : e.kind === "absent" ? e.nick + " · 불참" : e.nick;
-      const w = ctx.measureText(label).width + fs;
-      const bg = e.kind === "me" ? "#ffe14a" : e.kind === "talk" ? "#ff4a1c" : e.kind === "staff" ? "#2f6fe4" : e.kind === "absent" ? "#4a2e17" : e.kind === "nikke" ? "#d6336c" : "rgba(16,16,22,0.78)";
+    const placed = [];
+    // 이름표 하나를 그린다. giveWay면 이미 그린 이름표와 겹칠 때 그리지 않는다.
+    const tag = (text, px, py, lift, bg, fg, giveWay) => {
+      const cx = Math.round((px + 8) * s) - ox, cy = Math.round((py - lift) * s) - oy - fs * 0.6;
+      if (cx < -200 || cy < -40 || cx > cv.width + 200 || cy > cv.height + 40) return;
+      const w = ctx.measureText(text).width + fs, h = fs * 1.5, x = cx - w / 2, y = cy - fs * 0.75;
+      if (giveWay && placed.some((q) => x < q[0] + q[2] && q[0] < x + w && y < q[1] + q[3] && q[1] < y + h)) return;
+      placed.push([x, y, w, h]);
       ctx.fillStyle = bg;
-      ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - fs * 0.75, w, fs * 1.5, fs * 0.35); ctx.fill();
-      ctx.fillStyle = e.kind === "me" || e.kind === "talk" ? "#111" : "#fff";
-      ctx.fillText(label, cx, cy + dpr * 0.5);
+      ctx.beginPath(); ctx.roundRect(x, y, w, h, fs * 0.35); ctx.fill();
+      ctx.fillStyle = fg;
+      ctx.fillText(text, cx, cy + dpr * 0.5);
+    };
+    // 객석은 이름표가 서로 겹친다. 평소에는 내가 마주 본 자리부터 가까운 순으로 겹치지 않는 것만, 대기 화면에서는 소개 중인 한 명만 보여 준다.
+    const [fdx, fdy] = DIRS[player.dir];
+    const far = ({ e }) => !e.seated ? -1 : Math.abs(e.x - player.x) + Math.abs(e.y - player.y) - (e.x === player.x + fdx && e.y === player.y + fdy ? 0.5 : 0);
+    const tagged = ents.filter((o) => o.e.kind !== "ticket" && (!o.e.seated || (standby ? featured && o.e.nick === featured.nick : far(o) <= 4)));
+    for (const { e, p } of tagged.sort((a, b) => far(a) - far(b))) {
+      const lift = e.kind === "absent" ? 18 : SPONSORS.has(e.nick) ? 6 : 5;
+      const label = e.kind === "talk" ? "🎤 " + e.nick : e.kind === "absent" ? e.nick + " · 불참" : e.nick;
+      const spot = standby && e.seated;
+      const bg = spot || e.kind === "me" ? "#ffe14a" : e.kind === "talk" ? "#ff4a1c" : e.kind === "staff" ? "#2f6fe4" : e.kind === "absent" ? "#4a2e17" : e.kind === "nikke" ? "#d6336c" : "rgba(16,16,22,0.78)";
+      tag(label, p[0], p[1], lift, bg, spot || e.kind === "me" || e.kind === "talk" ? "#111" : "#fff", e.seated && !standby);
     }
+    if (scene === "hall" && mySeat && !standby) tag("내 자리", mySeat[0] * TS, mySeat[1] * TS, 1, "#ffe14a", "#111", true);
   }
 
   let last = performance.now();
@@ -1280,7 +1507,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     if (t === "A") return openDialog(talkGuide());
     if (t === "K") return openDialog([["스크린", "GENERATION IS DONE"], ["스크린", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 12:00 · 영등포"]]);
     if (t === "U") return openDialog([["", "연단이다. 마이크에서 「아, 아, 마이크 테스트」 소리가 남아 있는 것 같다."]]);
-    if (t === "C") return openDialog([["", "아직 아무도 앉지 않은 의자다. 29일에는 꽉 찰 것이다."]]);
+    if (t === "C") return openDialog([["", !seatedNow() ? "아직 아무도 앉지 않은 의자다. 29일에는 꽉 찰 것이다."
+      : mySeat && mySeat[0] === tx && mySeat[1] === ty ? "의자에 내 이름표가 붙어 있다. 내 자리다." : "빈 의자다. 아직 주인이 없다."]]);
     if (t === "Y") return openDialog([["", "피자가 놓여 있다. 아직 따끈하다."], ["", "…29일 전까지 먹으면 안 될 것 같다."]]);
     if (t === "Z") return openDialog([["", "콜라와 맥주가 줄지어 있다. 맥주는 16캔 준비됐다."]]);
     if (t === "V") return openDialog([["", "소주와 위스키, 잔이 놓여 있다."], ["", "발표가 끝난 뒤를 위한 것이라고 적혀 있다."]]);
@@ -1296,16 +1524,20 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   const codeOf = (ev) => ev.code || ({ " ": "Space", z: "KeyZ", Z: "KeyZ", w: "KeyW", a: "KeyA", s: "KeyS", d: "KeyD" })[ev.key] || ev.key;
   function enter() { game.focus(); }
   $("enter").addEventListener("click", enter);
-  game.addEventListener("focus", () => { active = true; game.classList.add("on"); music.start(); });
-  game.addEventListener("blur", () => { active = false; held = []; game.classList.remove("on"); music.stop(); });
+  if (seatedNow()) $("enter").firstChild.textContent = "▶ 세미나실 둘러보기";
+  // 대기 화면은 조작을 받지 않는다. 음악과 전체 화면은 아래 대기 화면 쪽에서 따로 다룬다.
+  game.addEventListener("focus", () => { if (standby) return; active = true; game.classList.add("on"); music.start(); });
+  game.addEventListener("blur", () => { if (standby) return; active = false; held = []; game.classList.remove("on"); music.stop(); });
   game.addEventListener("keydown", (ev) => {
+    if (standby) return;
     const c = codeOf(ev);
     if (c === "Escape") { game.blur(); return; }
     const d = KEYS[c];
     if (d) { ev.preventDefault(); if (!held.includes(d)) held.push(d); return; }
     if (ACT.includes(c)) { ev.preventDefault(); if (!ev.repeat) act(); }
   });
-  game.addEventListener("keyup", (ev) => { const d = KEYS[codeOf(ev)]; if (d) held = held.filter((h) => h !== d); });  document.querySelectorAll(".dpad button").forEach((b) => {
+  game.addEventListener("keyup", (ev) => { const d = KEYS[codeOf(ev)]; if (d) held = held.filter((h) => h !== d); });
+  document.querySelectorAll(".dpad button").forEach((b) => {
     const d = b.dataset.dir;
     const down = (ev) => { ev.preventDefault(); if (!active) enter(); if (!held.includes(d)) held.push(d); };
     const up = () => { held = held.filter((h) => h !== d); };
@@ -1347,6 +1579,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       const data = await res.json();
       if (!data.ok) return;
       total = data.total || 0; pending = data.pending || 0;
+      seatsLeft = Math.max(0, CAPACITY - total);
       syncPeople(data.people || [], data.absent || []);
       renderTalks(); renderCounts();
     } catch (err) { /* 다음 주기에 다시 시도 */ }
@@ -1354,6 +1587,57 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   renderCounts();
   if (API) { loadPeople(); setInterval(loadPeople, 30000); }
   else $("api-state").textContent = "접수 연결 준비 중입니다. 열리면 이 자리에서 바로 신청할 수 있습니다.";
+  const paintDday = () => { const d = dday(); $("hud-dday").textContent = d > 0 ? `D-${d}` : d === 0 ? "D-DAY" : ""; };
+  paintDday(); setInterval(paintDday, 60000);
+
+  // ───── 프로젝터 대기 화면 (?standby) ─────
+  // 세미나실 전경 옆에 시계를 띄우고 주민 한마디를 한 명씩 돌려 가며 소개한다. ?standby&msg=쉬는+시간 처럼 안내 문구를 바꿀 수 있다.
+  if (standby) {
+    const two = (n) => String(n).padStart(2, "0");
+    const note = qs.get("msg");
+    $("sb-sponsors").textContent = "후원 " + [...SPONSORS].join(" · ");
+    const tick = () => {
+      const t = clock(), k = new Date(t + KST), left = EVENT - t;
+      $("sb-clock").textContent = `${two(k.getUTCHours())}:${two(k.getUTCMinutes())}`;
+      $("sb-status").textContent = note || (left <= 0 ? "세미나 진행 중"
+        : left < 3600e3 ? `시작까지 ${two(Math.floor(left / 60e3))}:${two(Math.floor(left / 1e3) % 60)}`
+        : left < DAY ? `시작까지 ${Math.floor(left / 3600e3)}시간 ${Math.floor(left / 60e3) % 60}분`
+        : `D-${dday()} · 11월 29일 12:00 시작`);
+      $("sb-n").textContent = people.length;
+      $("sb-t").textContent = people.filter((p) => p.type === "talk").length;
+    };
+    tick(); setInterval(tick, 1000);
+    let queue = [];
+    const introduce = () => {
+      if (!people.length) return;
+      if (!queue.length) queue = people.map((p) => p.nick).sort(() => Math.random() - 0.5);
+      const nick = queue.pop(), p = people.find((x) => x.nick === nick);
+      if (!p) return introduce(); // 그사이 명단에서 빠진 사람은 건너뛴다
+      $("sb-quote").classList.add("swap");
+      setTimeout(() => {
+        featured = { nick, at: performance.now() };
+        $("sb-who").textContent = (p.type === "talk" ? "🎤 " : "") + nick;
+        $("sb-line").textContent = p.line || IDLE_LINES[hash(nick) % IDLE_LINES.length];
+        $("sb-talk").textContent = p.type === "talk" ? `발표 「${p.title || "TBD"}」` : `주민 번호 #${two(p.seat)}`;
+        $("sb-quote").classList.remove("swap");
+      }, 380);
+    };
+    const first = setInterval(() => { if (people.length) { clearInterval(first); introduce(); setInterval(introduce, 6500); } }, 400);
+    const fullscreen = () => {
+      try { Promise.resolve(document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => {}); } catch (err) { /* 전체 화면을 막아 둔 환경 */ }
+    };
+    addEventListener("pointerdown", () => music.start());
+    addEventListener("dblclick", fullscreen);
+    addEventListener("keydown", (ev) => {
+      const c = codeOf(ev);
+      if (c === "KeyF") fullscreen();
+      else if (c === "KeyM") { music.toggle(); music.start(); }
+      else if (c === "Escape" && !document.fullscreenElement) location.href = location.pathname;
+    });
+    // 프로젝터에 띄워 두는 동안 화면이 꺼지지 않게 한다.
+    const awake = () => { try { navigator.wakeLock && navigator.wakeLock.request("screen").catch(() => {}); } catch (err) { /* 지원하지 않는 브라우저 */ } };
+    awake(); document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") awake(); });
+  }
 
   // ───── Form ─────
   const form = $("form");

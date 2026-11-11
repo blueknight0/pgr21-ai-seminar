@@ -599,10 +599,11 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         <div><p class="mono">Timetable · 11.29</p><h2 id="prog-h">프로그램</h2></div>
         <p class="side">발표 순서와 발표자는 자료를 받은 뒤 정해 공개합니다. 시간은 예정이며 조금씩 바뀔 수 있습니다. 발표 자료는 공개에 동의한 최종본만 행사 후 배포합니다.</p>
       </div>
-      <!-- 당일에는 스크립트가 지금 진행 중인 줄에 on을 붙인다. 각 줄의 <time>은 시작 시각(HH:MM)이어야 한다. -->
+      <!-- 당일에는 스크립트가 지금 진행 중인 줄에 on을 붙인다. 각 줄의 <time>은 시작 시각(HH:MM)이어야 한다.
+           발표자가 정해진 li.talk에는 data-nick(시트 닉네임 그대로)을 붙이면 세미나실 이젤 안내에도 그 순서로 나온다. -->
       <ol class="prog">
         <li><time>12:00</time><div><b>시작 · 입장과 인사<i>점심</i></b><span>피자와 음료가 점심입니다. 발표를 들으며 드세요.</span></div></li>
-        <li class="talk"><time>12:15</time><div><b>발표 1</b><span>발표자 TBD · 내용 TBD · 20분</span></div></li>
+        <li class="talk" data-nick="열혈둥이"><time>12:15</time><div><b>발표 1 · 열혈둥이</b><span>「꼭 남에게 재밋어야 할까요? - 게임제작 삽질기.」 · 20분</span></div></li>
         <li class="talk"><time>12:35</time><div><b>발표 2</b><span>발표자 TBD · 내용 TBD · 20분</span></div></li>
         <li class="talk"><time>12:55</time><div><b>발표 3</b><span>발표자 TBD · 내용 TBD · 20분</span></div></li>
         <li class="qa"><time>13:15</time><div><b>질의응답 · 발표 1–3</b><span>25분</span></div></li>
@@ -1503,13 +1504,18 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const done = dialog.onClose; dialog = null; done && done();
   }
 
-  // 세미나실 이젤: 시트에 등록된 발표자와 발표 제목을 그대로 안내한다.
+  // 세미나실 이젤: 프로그램 표에서 순서가 정해진 발표(li.talk의 data-nick)를 먼저, 나머지는 순서 미정으로 안내한다. 제목은 시트에 등록된 것을 쓴다.
   function talkGuide() {
     const talks = people.filter((p) => p.type === "talk");
     const head = ["발표 안내", "제4회 PGR21 AI 세미나 · 11월 29일(일) 12:00 · Generation is Done"];
     if (!talks.length) return [head, ["발표 안내", "아직 등록된 발표가 없습니다. 첫 발표를 기다리고 있습니다."]];
-    return [head, ["발표 안내", `등록된 발표 ${talks.length}개. 순서는 전날 자료를 보고 주제가 이어지도록 정합니다.`],
-      ...talks.map((p, i) => [`발표 ${String(i + 1).padStart(2, "0")} · ${p.nick}`, `「${p.title || "TBD"}」`]),
+    const slots = [...document.querySelectorAll(".prog li.talk")]
+      .map((li, i) => ({ n: i + 1, at: li.querySelector("time").textContent, nick: li.dataset.nick })).filter((s) => s.nick);
+    const fixed = new Set(slots.map((s) => s.nick));
+    const titleOf = (nick) => (talks.find((p) => p.nick === nick) || {}).title || "TBD";
+    return [head, ["발표 안내", `등록된 발표 ${talks.length}개. 나머지 순서는 자료를 보고 주제가 이어지도록 정합니다.`],
+      ...slots.map((s) => [`발표 ${s.n} · ${s.at} · ${s.nick}`, `「${titleOf(s.nick)}」`]),
+      ...talks.filter((p) => !fixed.has(p.nick)).map((p) => [`순서 미정 · ${p.nick}`, `「${p.title || "TBD"}」`]),
       ["발표 안내", "피자와 음료는 발표를 들으며 드시는 점심입니다. 발표 3개마다 질의응답이 있고, 15:05에 20분 쉽니다."],
       ["발표 안내", "17:00부터 같은 자리에서 2차 뒷풀이. 배달음식이며 별도 비용이 듭니다."]];
   }

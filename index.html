@@ -786,7 +786,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
   const ROBOT_PAL = { k: "#1e1e26", m: "#d5dde8", e: "#3de0ff", d: "#5a6a80", b: "#8fa3bd", l: "#ffe14a", r: "#ff4a1c", p: "#5a6a80" };
   const ROBOT = { robot: true };
-  const STONE = { skin: "#c4c7cc", hair: "#8d929a", shirt: "#a9adb4", pants: "#767b83", cap: null };
+  const GOLD = { id: "gold", skin: "#ffd75e", hair: "#c9961a", shirt: "#f2bf2f", pants: "#b88412", cap: null };
   // 도로시(니케): 분홍 긴 머리에 흰 리본 장식, 보라색 큰 눈, 금빛 장식을 단 흰 프릴 드레스. 16줄을 통째로 그린다.
   const DOROTHY = {
     id: "dorothy",
@@ -1064,7 +1064,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     mk({ x: 29, y: 15, look: DOROTHY, nick: "도로시", kind: "nikke", still: true,
       say: () => [["도로시", "제가 여기 왜 있는거죠...?"]] }),
     // 오지 못하는 대신 후원해 주신 분의 돌 동상. 받침대 위에 회색으로 선다.
-    mk({ x: 19, y: 16, look: STONE, nick: "연구의 괴로움", kind: "statue", still: true,
+    mk({ x: 19, y: 16, look: GOLD, nick: "연구의 괴로움", kind: "statue", still: true,
       say: () => [["연구의 괴로움 님 동상", "세미나에는 함께하지 못하지만, 스팀 5만 원과 투썸플레이스 기프티콘 10장을 보내 주신 연구의 괴로움 님의 동상이다."],
         ["", "받침대의 금빛 명판에 「후원에 감사드립니다 · 제4회 PGR21 AI 세미나」라고 새겨져 있다."]] }),
   ];
@@ -1120,7 +1120,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     for (const [a, [x, y]] of slots) {
       const line = a.line || APOLOGY_LINES[hash(a.nick) % APOLOGY_LINES.length];
       keep.push(mk({ x, y, look: lookOf(a.nick), nick: a.nick, kind: "absent", still: true, dir: "down",
-        say: () => [[a.nick, line], ["", `${a.nick} 님은 불참한 죄로 광장 십자가에 매달려 있다.`]] }));
+        say: () => [[a.nick, line], ["", `${a.nick} 님은 불참한 죄로 광장 십자가에 매달려 있다. 발밑에서 장작불이 활활 타오른다.`]] }));
     }
     // 입장권은 남은 자리 수만큼 둔다. 세미나가 시작되면 치운다.
     const want = clock() < EVENT ? Math.min(seatsLeft, TICKET_SPOTS.length) : 0;
@@ -1300,11 +1300,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         ctx.beginPath(); ctx.ellipse(sx + 8 * s, sy + 14.5 * s, 5 * s, 2 * s, 0, 0, Math.PI * 2); ctx.fill();
       }
       if (e.kind === "statue") {
-        // 돌 받침대와 금빛 명판 위에 회색 아바타를 세운다.
+        // 돌 받침대와 금빛 명판 위에 금색 아바타를 세운다. 몸 위로 반짝임이 돈다.
         const R = (col, x, y, w, h) => { ctx.fillStyle = col; ctx.fillRect(sx + x * s, sy + y * s, w * s, h * s); };
         R("#5f646c", 1, 6, 14, 9); R("#9aa0a8", 2, 6, 12, 2); R("#7c828b", 2, 8, 12, 6);
         R("#d9a520", 5, 9, 6, 3); R("#8a6510", 6, 10, 4, 1);
         ctx.drawImage(sprite(e.look, "down", 0), sx, sy - 9 * s, TS * s, TS * s);
+        const tw = Math.floor(now / 350) % 4, [gx, gy] = [[4, -6], [11, -3], [6, 1], [10, -8]][tw];
+        R("#fffbe0", gx, gy, 1, 1); R("rgba(255,251,224,0.6)", gx - 1, gy, 3, 1); R("rgba(255,251,224,0.6)", gx, gy - 1, 1, 3);
         continue;
       }
       if (e.kind === "absent") {
@@ -1315,6 +1317,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         const sway = Math.round(Math.sin(now / 700 + hash(e.nick)) * 0.6) * s;
         ctx.drawImage(sprite(e.look, "down", 0), sx + sway, sy - 12 * s, TS * s, TS * s);
         R("#d9c08a", 1, -10, 2, 2); R("#d9c08a", 13, -10, 2, 2);
+        // 발밑 장작에 불이 붙어 일렁인다.
+        R("#3e2816", 1, 13, 14, 2); R("#6a4226", 3, 12, 10, 1);
+        for (let i = 0; i < 6; i++) {
+          const h = 4 + Math.round((Math.sin(now / 90 + i * 1.7 + hash(e.nick)) + 1) * 2.5), x = 2 + i * 2;
+          R("#e8542c", x, 13 - h, 2, h); R("#ffb020", x + (i % 2), 14 - Math.max(2, h - 2), 1, Math.max(2, h - 2) - 1);
+          if (h > 7) R("#fff3a0", x + (i % 2), 13 - h + 2, 1, 2);
+        }
         continue;
       }
       // 앉은 주민은 상반신만 그리고, 의자 등받이를 그 위에 다시 덮는다.

@@ -451,7 +451,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   <div class="sponsor-bar">
     <div class="wrap sponsors" aria-label="후원">
       <span class="mono lab">Sponsors</span>
-      <div class="sp main"><span class="mono">후원</span><b>Psyki</b><b class="kr">성야무인</b><b>Tiny</b><b class="kr">유주하리</b></div>
+      <div class="sp main"><span class="mono">후원</span><b>Psyki</b><b class="kr">성야무인</b><b>Tiny</b><b class="kr">유주하리</b><b class="kr">연구의 괴로움</b></div>
       <div class="sp open"><span class="mono">후원</span><b>모집중</b><small>방장에게 문의</small></div>
     </div>
   </div>
@@ -706,7 +706,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
 
   // ───── Ticker ─────
-  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki · 성야무인 · Tiny · 유주하리", "PGR21 AI Seminar Vol.04"];
+  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki · 성야무인 · Tiny · 유주하리 · 연구의 괴로움", "PGR21 AI Seminar Vol.04"];
   const set = phrases.map((p) => `<span>${p}</span>`).join("");
   $("ticker").innerHTML = set + set + set + set;
 
@@ -786,6 +786,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
   const ROBOT_PAL = { k: "#1e1e26", m: "#d5dde8", e: "#3de0ff", d: "#5a6a80", b: "#8fa3bd", l: "#ffe14a", r: "#ff4a1c", p: "#5a6a80" };
   const ROBOT = { robot: true };
+  const STONE = { skin: "#c4c7cc", hair: "#8d929a", shirt: "#a9adb4", pants: "#767b83", cap: null };
   // 도로시(니케): 분홍 긴 머리에 흰 리본 장식, 보라색 큰 눈, 금빛 장식을 단 흰 프릴 드레스. 16줄을 통째로 그린다.
   const DOROTHY = {
     id: "dorothy",
@@ -1062,6 +1063,10 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         : [["Tinybot", "삐빅. 안녕하세요. 안내 로봇 Tinybot입니다."], ["Tinybot", "발표하고 싶은 이야기가 있다면 아래 접수처에서 발표 참가를 선택하세요."], ["Tinybot", "생성은 끝났습니다. 하지만 이야기는 아직입니다. 삐빅."]] }),
     mk({ x: 29, y: 15, look: DOROTHY, nick: "도로시", kind: "nikke", still: true,
       say: () => [["도로시", "제가 여기 왜 있는거죠...?"]] }),
+    // 오지 못하는 대신 후원해 주신 분의 돌 동상. 받침대 위에 회색으로 선다.
+    mk({ x: 19, y: 16, look: STONE, nick: "연구의 괴로움", kind: "statue", still: true,
+      say: () => [["연구의 괴로움 님 동상", "세미나에는 함께하지 못하지만, 스팀 5만 원과 투썸플레이스 기프티콘 10장을 보내 주신 연구의 괴로움 님의 동상이다."],
+        ["", "받침대의 금빛 명판에 「후원에 감사드립니다 · 제4회 PGR21 AI 세미나」라고 새겨져 있다."]] }),
   ];
   // 세미나실에서는 짬뽕순두부bot 셋이 준비에 한창이다. 접수자는 들어오지 않는다.
   const botLook = (id, b, m) => ({ robot: true, id, pal: Object.assign({}, ROBOT_PAL, { b, m }) });
@@ -1294,6 +1299,14 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         ctx.fillStyle = "rgba(0,0,0,0.22)";
         ctx.beginPath(); ctx.ellipse(sx + 8 * s, sy + 14.5 * s, 5 * s, 2 * s, 0, 0, Math.PI * 2); ctx.fill();
       }
+      if (e.kind === "statue") {
+        // 돌 받침대와 금빛 명판 위에 회색 아바타를 세운다.
+        const R = (col, x, y, w, h) => { ctx.fillStyle = col; ctx.fillRect(sx + x * s, sy + y * s, w * s, h * s); };
+        R("#5f646c", 1, 6, 14, 9); R("#9aa0a8", 2, 6, 12, 2); R("#7c828b", 2, 8, 12, 6);
+        R("#d9a520", 5, 9, 6, 3); R("#8a6510", 6, 10, 4, 1);
+        ctx.drawImage(sprite(e.look, "down", 0), sx, sy - 9 * s, TS * s, TS * s);
+        continue;
+      }
       if (e.kind === "absent") {
         // 나무 십자가: 기둥과 가로대를 그린 뒤 아바타를 가로대 높이에 매단다. 살짝 흔들린다.
         const R = (col, x, y, w, h) => { ctx.fillStyle = col; ctx.fillRect(sx + x * s, sy + y * s, w * s, h * s); };
@@ -1357,10 +1370,10 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const far = ({ e }) => !e.seated ? -1 : Math.abs(e.x - player.x) + Math.abs(e.y - player.y) - (e.x === player.x + fdx && e.y === player.y + fdy ? 0.5 : 0);
     const tagged = ents.filter((o) => o.e.kind !== "ticket" && (!o.e.seated || (standby ? featured && o.e.nick === featured.nick : far(o) <= 4)));
     for (const { e, p } of tagged.sort((a, b) => far(a) - far(b))) {
-      const lift = e.kind === "absent" ? 18 : SPONSORS.has(e.nick) ? 6 : 5;
-      const label = e.kind === "talk" ? "🎤 " + e.nick : e.kind === "absent" ? e.nick + " · 불참" : e.nick;
+      const lift = e.kind === "absent" ? 18 : e.kind === "statue" ? 11 : SPONSORS.has(e.nick) ? 6 : 5;
+      const label = e.kind === "talk" ? "🎤 " + e.nick : e.kind === "absent" ? e.nick + " · 불참" : e.kind === "statue" ? e.nick + " 님 동상" : e.nick;
       const spot = standby && e.seated;
-      const bg = spot || e.kind === "me" ? "#ffe14a" : e.kind === "talk" ? "#ff4a1c" : e.kind === "staff" ? "#2f6fe4" : e.kind === "absent" ? "#4a2e17" : e.kind === "nikke" ? "#d6336c" : "rgba(16,16,22,0.78)";
+      const bg = spot || e.kind === "me" ? "#ffe14a" : e.kind === "talk" ? "#ff4a1c" : e.kind === "staff" ? "#2f6fe4" : e.kind === "absent" ? "#4a2e17" : e.kind === "nikke" ? "#d6336c" : e.kind === "statue" ? "#8a6510" : "rgba(16,16,22,0.78)";
       tag(label, p[0], p[1], lift, bg, spot || e.kind === "me" || e.kind === "talk" ? "#111" : "#fff", e.seated && !standby);
     }
     if (scene === "hall" && mySeat && !standby) tag("내 자리", mySeat[0] * TS, mySeat[1] * TS, 1, "#ffe14a", "#111", true);

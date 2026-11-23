@@ -608,13 +608,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         <li class="talk" data-nick="유주하리"><time>12:55</time><div><b>발표 3 · 유주하리</b><span>「ai 잡부인생의 삶」 · 20분</span></div></li>
         <li class="qa"><time>13:15</time><div><b>질의응답 · 발표 1–3</b><span>25분</span></div></li>
         <li class="talk" data-nick="무한의가락"><time>13:40</time><div><b>발표 4 · 무한의가락</b><span>「AI 다이소: 이것저것 시켜보고 알게 된 팁들 공유」 · 20분 · <a href="https://pgr21.seminar4.bygilje.com/" target="_blank" rel="noopener">발표 티저 사이트 ↗</a></span></div></li>
-        <li class="talk"><time>14:00</time><div><b>발표 5</b><span>발표자 TBD · 내용 TBD · 20분</span></div></li>
-        <li class="talk"><time>14:20</time><div><b>발표 6</b><span>발표자 TBD · 내용 TBD · 20분</span></div></li>
+        <li class="talk" data-nick="나혼자만레벨업"><time>14:00</time><div><b>발표 5 · 나혼자만레벨업</b><span>「아스트라로 다시 이뤄보는 꿈 (게임 10개 만든 이야기)」 · 20분</span></div></li>
+        <li class="talk" data-nick="이슈타르"><time>14:20</time><div><b>발표 6 · 이슈타르</b><span>「봇(Bot) 질 너도 할 수 있다.」 · 20분</span></div></li>
         <li class="qa"><time>14:40</time><div><b>질의응답 · 발표 4–6</b><span>25분</span></div></li>
         <li class="brk"><time>15:05</time><div><b>쉬는 시간</b><span>20분</span></div></li>
-        <li class="talk"><time>15:25</time><div><b>발표 7</b><span>발표자 TBD · 내용 TBD · 20분</span></div></li>
-        <li class="talk"><time>15:45</time><div><b>발표 8</b><span>발표자 TBD · 내용 TBD · 20분</span></div></li>
-        <li class="talk"><time>16:05</time><div><b>발표 9</b><span>발표자 TBD · 내용 TBD · 20분</span></div></li>
+        <li class="talk" data-nick="세령"><time>15:25</time><div><b>발표 7 · 세령</b><span>「AI에게 대체당하는 방법」 · 20분</span></div></li>
+        <li class="talk" data-nick="성야무인"><time>15:45</time><div><b>발표 8 · 성야무인</b><span>「너 실험 시뮬레아션응 아니?」 · 20분</span></div></li>
+        <li class="talk" data-nick="ShuRA"><time>16:05</time><div><b>발표 9 · ShuRA</b><span>「날씨의AI 만드는 이야기」 · 20분</span></div></li>
         <li class="qa"><time>16:25</time><div><b>질의응답 · 발표 7–9</b><span>25분</span></div></li>
         <li class="talk" data-nick="Hyunuk"><time>16:50</time><div><b>발표 10 · Hyunuk</b><span>「에이전트 스킬만으로는 부족하더라구요.」 · 60분</span></div></li>
         <li class="brk"><time>17:50</time><div><b>마무리</b><span>10분</span></div></li>
@@ -1533,11 +1533,11 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const head = ["발표 안내", "제4회 PGR21 AI 세미나 · 11월 29일(일) 12:00 · Generation is Done"];
     if (!talks.length) return [head, ["발표 안내", "아직 등록된 발표가 없습니다. 첫 발표를 기다리고 있습니다."]];
     const slots = [...document.querySelectorAll(".prog li.talk")]
-      .map((li, i) => ({ n: i + 1, at: li.querySelector("time").textContent, nick: li.dataset.nick })).filter((s) => s.nick);
+      .map((li, i) => ({ n: i + 1, at: li.querySelector("time").textContent, nick: li.dataset.nick, title: (li.textContent.match(/「(.+?)」/) || [])[1] })).filter((s) => s.nick);
     const fixed = new Set(slots.map((s) => s.nick));
     const titleOf = (nick) => (talks.find((p) => p.nick === nick) || {}).title || "TBD";
-    return [head, ["발표 안내", `등록된 발표 ${talks.length}개. 나머지 순서는 자료를 보고 주제가 이어지도록 정합니다.`],
-      ...slots.map((s) => [`발표 ${s.n} · ${s.at} · ${s.nick}`, `「${titleOf(s.nick)}」`]),
+    return [head, ["발표 안내", talks.every((p) => fixed.has(p.nick)) ? `발표 ${slots.length}개, 순서가 모두 정해졌습니다. 주제가 이어지도록 묶었습니다.` : `등록된 발표 ${talks.length}개. 나머지 순서는 자료를 보고 주제가 이어지도록 정합니다.`],
+      ...slots.map((s) => [`발표 ${s.n} · ${s.at} · ${s.nick}`, `「${s.title || titleOf(s.nick)}」`]),
       ...talks.filter((p) => !fixed.has(p.nick)).map((p) => [`순서 미정 · ${p.nick}`, `「${p.title || "TBD"}」`]),
       ["발표 안내", "피자와 음료는 발표를 들으며 드시는 점심입니다. 발표 3개마다 질의응답이 있고, 15:05에 20분 쉽니다."],
       ["발표 안내", "18:00부터 같은 자리에서 2차 뒷풀이. 배달음식이며 별도 비용이 듭니다."]];

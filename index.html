@@ -210,6 +210,20 @@ h2 { font-family: var(--font-kr-display); font-weight: 400; font-size: clamp(2.4
 .keys { margin: 12px 0 0; color: var(--muted); font-size: 0.875rem; }
 .keys kbd { font-family: var(--font-mono); font-size: 0.75rem; border: 1px solid var(--line); border-bottom-width: 2px; padding: 1px 6px; border-radius: 4px; }
 @media (hover: none), (max-width: 760px) { .pad { display: flex; } .keys { display: none; } }
+/* 경품몬 잡기 안내판: 운영진이 시트에서 열면 나타난다 */
+.hunt { margin-top: 20px; border: 2px solid var(--ink); background: var(--field); padding: 16px; display: grid; gap: 10px; }
+.hunt[hidden], .hunt form[hidden] { display: none; }
+.hunt h3 { margin: 0; font-family: var(--font-kr-display); font-weight: 400; font-size: 1.4rem; line-height: 1.2; }
+.hunt p { margin: 0; }
+.hunt .msg:empty { display: none; }
+.hunt form { display: flex; flex-wrap: wrap; gap: 8px; }
+.hunt input { flex: 1 1 220px; min-width: 0; font: inherit; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 0; background: var(--bg); color: var(--ink); }
+.hunt button { font: inherit; font-weight: 700; padding: 10px 16px; border: 2px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; }
+.hunt button:disabled { opacity: 0.5; cursor: default; }
+.hunt ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.hunt li { font-size: 0.875rem; border-bottom: 1px solid var(--line); padding: 6px 0; display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+.hunt li span { color: var(--muted); flex: 1 1 200px; }
+.hunt .balls { color: var(--accent); letter-spacing: 0.15em; }
 
 /* Sign-up */
 .signup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
@@ -384,6 +398,10 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
 .sb-quote small { color: #a9a69d; font-weight: 700; font-size: max(0.8125rem, calc(var(--pw) * 0.034)); line-height: 1.4; }
 .sb-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; color: #a9a69d; font-size: max(0.8125rem, calc(var(--pw) * 0.03)); }
 .sb-foot b { color: #f2f0ea; }
+.sb-hunt { display: grid; gap: 4px; padding-top: 12px; border-top: 1px solid rgba(242, 240, 234, 0.18); color: #f2f0ea; font-size: max(0.8125rem, calc(var(--pw) * 0.034)); line-height: 1.4; }
+.sb-hunt[hidden] { display: none; }
+.sb-hunt b { color: #ff4a1c; }
+.sb-hunt .miss { color: #a9a69d; }
 .sb-hint { color: #a9a69d; font-size: 0.6875rem; animation: sb-hint 14s forwards; }
 @keyframes sb-hint { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
 
@@ -511,6 +529,18 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
         <button type="button" class="a" id="btn-a">A</button>
       </div>
       <p class="keys"><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> 또는 <kbd>WASD</kbd> 이동 · <kbd>Z</kbd> <kbd>Space</kbd> <kbd>Enter</kbd> 말 걸기·다음 · <kbd>Esc</kbd> 나가기</p>
+      <div class="hunt" id="hunt" hidden>
+        <p class="mono">Prize Hunt · 경품몬 잡기</p>
+        <h3 id="hunt-title">GAME 수풀에 경품몬이 나타났다</h3>
+        <p id="hunt-state" role="status"></p>
+        <p class="msg err" id="hunt-msg" role="alert"></p>
+        <form id="hunt-form" novalidate>
+          <input type="email" id="hunt-email" maxlength="120" autocomplete="email" placeholder="접수할 때 쓴 이메일" aria-label="접수할 때 쓴 이메일">
+          <button type="submit" id="hunt-go">트레이너 인증</button>
+        </form>
+        <ul id="hunt-stock" aria-label="경품 현황"></ul>
+        <p class="note">볼을 던져도 경품이 도망갈 수 있습니다. 한 사람이 경품 하나만 잡을 수 있고, 잡은 경품은 마무리 시간에 드립니다.</p>
+      </div>
     </div>
   </section>
 
@@ -661,6 +691,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     <p class="sb-sub">제4회 PGR21 AI 세미나 · 11.29 일요일 12:00 · 영등포 이즈플레이 2호점</p>
     <p class="sb-clock"><b id="sb-clock">--:--</b><span id="sb-status"></span></p>
     <div class="sb-quote swap" id="sb-quote"><span class="sb-who" id="sb-who"></span><p id="sb-line"></p><small id="sb-talk"></small></div>
+    <div class="sb-hunt" id="sb-hunt" hidden></div>
     <p class="sb-foot"><span>참가 <b id="sb-n">0</b>명 · 발표 <b id="sb-t">0</b>개</span><span id="sb-sponsors"></span></p>
     <p class="mono sb-hint">클릭 음악 · M 음소거 · F 전체 화면 · Esc 나가기</p>
   </aside>
@@ -668,7 +699,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
 
 <script>
   // 구글 시트 Apps Script 웹 앱 URL(https://script.google.com/macros/s/.../exec)을 넣으면 접수와 마을이 켜집니다.
-  const API = "https://script.google.com/macros/s/AKfycbxyQ4D9Wv3ZARTjy6xJ7LcobKl90VEtpZeMVBsrj-kcXIFFCv5chiQcXO3debfZ7vYL/exec";
+  const API = "https://script.google.com/macros/s/AKfycbx774RYK9SGcBnJwkdRINd1RxjpGSEftSoMpf34-yQolo1KmC_YAw_4aKKi2krftPNu/exec";
   const CAPACITY = 35;
   const ME_KEY = "pgr21-ai4-me";
 
@@ -1019,7 +1050,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     "32,14": () => [["마을 게시판", `마을 주민 ${people.length}명 · 입주 심사 중 ${pending}명 · 정원 ${CAPACITY}명`], ["마을 게시판", ddayLine()], ["마을 게시판", "접수를 마치고 운영진 확인을 받으면 이 마을에 내 아바타가 입주한다고 적혀 있다."]],
     "13,12": () => [["ART 정원", "그림이 몇 초 만에 피어나는 곳."], ["ART 정원", "고르고 버리는 취향도 창작일까?"]],
     "15,22": () => [["DATA 호수", "분석은 한 줄 프롬프트가 됐다."], ["DATA 호수", "그럼 어떤 질문을 던질지는 누가 정하지?"]],
-    "34,22": () => [["GAME 수풀", "코드도, 에셋도, NPC 대사도 생성된다."], ["GAME 수풀", "…방금 그 대사도? 그럼 재미는 누가 설계하지?"]],
+    "34,22": () => [["GAME 수풀", "코드도, 에셋도, NPC 대사도 생성된다."], ["GAME 수풀", "…방금 그 대사도? 그럼 재미는 누가 설계하지?"],
+      ...(hunt && hunt.open ? [["GAME 수풀", `경품몬 출몰 중! ${hunt.prizes.filter((p) => p.left).map((p) => `${p.name} ${p.left}`).join(" · ") || "지금은 모두 주인을 찾아갔다."}`]] : [])],
   };
   const IDLE_LINES = ["생성은 끝났대. 그럼 이제 우린 뭘 하지?", "11월 29일에 여기서 봐!", "오늘은 만들러 온 게 아니라 이야기하러 왔어.", "프롬프트 쓰다 보니 벌써 11월이네.", "피자는 발표 들으면서 먹는 점심이래. 2차는 배달이고."];
   // 불참자는 광장 십자가에 매달린다. 시트 '불참' 탭에 한마디가 없으면 아래 사죄 문구 중 하나를 말한다.
@@ -1161,6 +1193,353 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   }
   if (me) syncPeople([]);
 
+  // ───── 경품몬 잡기와 맞교환 듀얼 ─────
+  // 운영진이 시트 '경품' 탭에서 열면 GAME 수풀에 경품몬이 나온다. 잡혔는지, 듀얼에서 이겼는지는 서버가 정하고 여기서는 연출만 한다.
+  const TRAINER_KEY = "pgr21-ai4-trainer";
+  const MON_ART = {
+    keyboard: { pal: { k: "#1e1e26", g: "#3a3f4a", w: "#e8e8ee", E: "#ffffff", e: "#1e1e26", m: "#ff4a1c" },
+      rows: ["", "", "", ".kkkkkkkkkkkkkk.", ".kwgwgwgwgwgwgk.", ".kgwgwgwgwgwgwk.", ".kggggggggggggk.", ".kggEEggggEEggk.", ".kggEeggggEeggk.",
+        ".kgggggmmgggggk.", ".kgwwwwwwwwwwgk.", ".kkkkkkkkkkkkkk.", "..kk........kk..", "..kk........kk..", ".kkk........kkk."] },
+    tablet: { pal: { k: "#1e1e26", b: "#4a4f5c", s: "#7fe0ee", E: "#ffffff", e: "#1e1e26", m: "#ff4a1c", w: "#e8e8ee" },
+      rows: ["", "...kkkkkkkkkk...", "...kbbbbbbbbk...", "...kbssssssbk...", "...kbsEssEsbk...", "...kbsessesbk...", "..kkbssssssbkk..", ".k.kbssmmssbk.k.",
+        "...kbssssssbk...", "...kbssssssbk...", "...kbbbbbbbbk...", "...kbbbwwbbbk...", "...kkkkkkkkkk...", "....kk....kk....", "...kkk....kkk..."] },
+    steam: { pal: { k: "#1e1e26", n: "#2f4f8f", w: "#e8e8ee", r: "#ff4a1c", E: "#ffffff", e: "#1e1e26", m: "#ffd23a" },
+      rows: ["", "", "", "", "..kkkk....kkkk..", ".knnnnkkkknnnnk.", "knnwnnnnnnnnrnnk", "knwwwnEnnEnrnrnk", "knnwnnennennrnnk", "knnnnnnmmnnnnnnk",
+        "knnnnkkkkkknnnnk", "knnnk......knnnk", ".kkk........kkk."] },
+    book: { pal: { k: "#1e1e26", r: "#c83c3c", p: "#fff3e0", y: "#ffd23a", E: "#ffffff", e: "#1e1e26", m: "#1e1e26" },
+      rows: ["", "..kkkkkkkkkkkk..", ".krrrrrrrrrrrpk.", ".krrrrrrrrrrrpk.", ".krrEErrrEErrpk.", ".krrEerrrEerrpk.", ".krrrrrrrrrrrpk.", ".krrrrmmmrrrrpk.",
+        ".krrrrrrrrrrrpk.", ".kryyyyyyyyrrpk.", ".krrrrrrrrrrrpk.", ".kkkkkkkkkkkkpk.", ".kppppppppppppk.", "..kkkkkkkkkkkk..", "...kk......kk..."] },
+    cafe: { pal: { k: "#1e1e26", c: "#fff3e0", w: "#ffffff", E: "#b5742f", e: "#1e1e26", m: "#ff4a1c" },
+      rows: [".....w....w.....", "....w....w......", ".....w....w.....", "..kkkkkkkkkkk...", "..kccccccccckkk.", "..kcEEcccEEck.k.", "..kcEecccEeck.k.", "..kccccccccckkk.",
+        "..kcccmmmccck...", "..kccccccccck...", "...kccccccck....", "....kkkkkkk.....", ".kkkkkkkkkkkkk..", "..kkkkkkkkkkk..."] },
+    gift: { pal: { k: "#1e1e26", o: "#ff4a1c", y: "#ffd23a", E: "#ffffff", e: "#1e1e26" },
+      rows: ["", "....yy....yy....", "...y..y..y..y...", "....yyyyyyyy....", ".kkkkkkyykkkkkk.", ".koooooyyoooook.", ".kkkkkkyykkkkkk.", "..koEEoyyoEEok..",
+        "..koEeoyyoEeok..", "..kooooyyooook..", "..kooooyyooook..", "..kooooyyooook..", "..kkkkkkkkkkkk.."] },
+  };
+  const BALL_ART = { pal: { k: "#1e1e26", o: "#ff4a1c", w: "#fbfaf5" }, rows: ["..kkkk..", ".kooook.", "kooooook", "kkkwwkkk", "kwwwwwwk", ".kwwwwk.", "..kkkk.."] };
+  const pixelArt = (art, w, h) => {
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    const g = c.getContext("2d");
+    art.rows.forEach((row, y) => [...row.slice(0, w)].forEach((ch, x) => { if (art.pal[ch]) { g.fillStyle = art.pal[ch]; g.fillRect(x, y, 1, 1); } }));
+    return c;
+  };
+  const monCache = new Map();
+  const MON_GUESS = [["키보드", "keyboard"], ["태블릿", "tablet"], ["스팀", "steam"], ["책", "book"], ["투썸", "cafe"], ["기프티콘", "cafe"]];
+  function monArt(look, name) {
+    if (!MON_ART[look]) look = (MON_GUESS.find(([word]) => name.includes(word)) || [0, "gift"])[1];
+    if (!monCache.has(look)) monCache.set(look, pixelArt(MON_ART[look], 16, 16));
+    return monCache.get(look);
+  }
+  const ballArt = pixelArt(BALL_ART, 8, 7);
+  // 받침이 있으면 "을", 없으면 "를"
+  const eul = (w) => { const c = w.charCodeAt(w.length - 1) - 0xac00; return w + (c < 0 || c > 11171 ? "을(를)" : c % 28 ? "을" : "를"); };
+
+  let hunt = null;       // 서버가 주는 현황 { open, balls, prizes: [{ name, look, rate, total, left }], feed, duel: { open, holders } }
+  let trainer = null;    // 이메일로 인증한 나 { email, nick, used, prize, duelUsed }
+  let battle = null;     // 조우 중인 경품몬 { p, … } 또는 듀얼 상대 { duel, look, … }
+  let huntHinted = false;
+  const HAND_NAME = { scissors: "가위", rock: "바위", paper: "보" };
+  const huntLeft = () => (hunt ? hunt.prizes.reduce((n, p) => n + p.left, 0) : 0);
+  const ballsLeft = () => (hunt && trainer ? Math.max(0, hunt.balls - trainer.used) : 0);
+  const duelOpen = () => !!(hunt && hunt.duel && hunt.duel.open);
+  const holderOf = (nick) => (hunt && hunt.duel ? hunt.duel.holders.find((h) => h.nick === nick) : null);
+  const prizeLook = (name) => ((hunt && hunt.prizes.find((p) => p.name === name)) || {}).look;
+  const api = (body) => fetch(API, { method: "POST", body: JSON.stringify(body) }).then((r) => r.json());
+  // 볼을 다 쓴 사람에게 건네는 안내. 경품이 남아 있으면 그중 하나를 받고, 없으면 사랑만 받는다. 몬스터로는 나오지 않는다.
+  const loveLines = (first, prize) => [["", first], ["", "빈손으로 돌아서려는데 누군가 어깨를 토닥인다."], ["짬뽕순두부", "괜찮아. 내 사랑을 줄게."],
+    ["", prize ? `${trainer.nick} 님은 「짬뽕순두부의 사랑」으로 「${prize}」${eul(prize).slice(prize.length)} 받았다!` : `${trainer.nick} 님은 「짬뽕순두부의 사랑」(꽝)을 받았다!`]];
+
+  function paintHunt() {
+    const box = $("hunt");
+    // 주소에 ?hunt 를 붙이면 닫혀 있어도 인증 칸이 보인다(운영진 테스트용).
+    box.hidden = !hunt || !(hunt.open || duelOpen() || (trainer && trainer.prize) || (hunt.duel && hunt.duel.holders.length) || qs.has("hunt"));
+    if (standby) paintFeed();
+    if (box.hidden) return;
+    const state = $("hunt-state"), left = huntLeft();
+    $("hunt-title").textContent = duelOpen() ? "듀얼 타임: 가위바위보로 경품을 맞바꿔라" : hunt.open || (trainer && trainer.test) ? "GAME 수풀에 경품몬이 나타났다" : "경품몬 잡기 결과";
+    $("hunt-form").hidden = !!trainer || !(hunt.open || duelOpen() || qs.has("hunt"));
+    state.replaceChildren();
+    if (trainer && trainer.test) $("hunt-msg").textContent = "테스트 모드입니다. 결과는 기록되지 않습니다. 경품을 받거나 볼을 다 쓰면 볼이 다시 채워집니다.";
+    if (!trainer && !hunt.open && !duelOpen()) state.textContent = "경품몬 잡기가 닫혀 있습니다. 누가 무엇을 가져갔는지는 아래에서 볼 수 있습니다.";
+    else if (!trainer) state.textContent = duelOpen() ? "접수할 때 쓴 이메일로 트레이너 인증을 하면 듀얼에 참가할 수 있습니다."
+      : "접수할 때 쓴 이메일로 트레이너 인증을 하면 마을 동쪽 GAME 수풀에서 경품몬을 잡을 수 있습니다.";
+    else if (trainer.prize) state.textContent = `${trainer.nick} 님의 경품: 「${trainer.prize}」. 마무리 시간에 운영진에게 이 화면을 보여 주세요.`
+      + (duelOpen() ? ` 경품을 가진 주민에게 말을 걸면 맞교환 듀얼을 신청할 수 있습니다. 도전권 ${trainer.duelUsed ? "사용함" : "1장 남음"}.` : "");
+    else if (!hunt.open) state.textContent = "경품몬 잡기가 닫혀 있습니다.";
+    else if (!ballsLeft() || !left) state.textContent = `${trainer.nick} 님은 「짬뽕순두부의 사랑」(꽝)을 받았습니다. ${left ? "볼을 다 썼습니다." : "경품몬이 모두 주인을 찾아갔습니다."}`;
+    else {
+      const balls = document.createElement("span");
+      balls.className = "balls"; balls.textContent = "●".repeat(ballsLeft()) + "○".repeat(trainer.used);
+      state.append(`${trainer.nick} 님 · 남은 볼 `, balls, " · 마을 동쪽 GAME 수풀을 걸어 보세요.");
+    }
+    // 경품 현황: 경품마다 남은 수와 지금 갖고 있는 사람(듀얼로 바뀌면 따라 바뀐다). 공개에 동의하지 않은 사람은 수만 센다.
+    const holders = hunt.duel ? hunt.duel.holders : [];
+    const hidden = hunt.prizes.reduce((n, p) => n + p.total - p.left, 0) - holders.length;
+    $("hunt-stock").replaceChildren(...hunt.prizes.map((p) => {
+      const li = document.createElement("li"), name = document.createElement("b"), who = document.createElement("span");
+      name.textContent = p.name;
+      who.textContent = holders.filter((h) => h.prize === p.name).map((h) => h.nick).join(" · ") || (p.left < p.total ? "" : "아직 없음");
+      li.append(name, ` 남은 ${p.left}/${p.total}`, who);
+      return li;
+    }), ...(hidden > 0 ? [Object.assign(document.createElement("li"), { textContent: `이름을 공개하지 않은 당첨자 ${hidden}명` })] : []));
+  }
+  // 프로젝터 대기 화면의 포획·듀얼 소식
+  function paintFeed() {
+    const box = $("sb-hunt");
+    box.hidden = !hunt || !(hunt.open || duelOpen() || hunt.feed.length);
+    if (box.hidden) return;
+    const head = document.createElement("span");
+    const n = document.createElement("b"); n.textContent = huntLeft();
+    head.append(duelOpen() ? "듀얼 타임 · 남은 경품 " : hunt.open ? "경품몬 잡기 · 남은 경품 " : "경품몬 잡기 종료 · 남은 경품 ", n, "개");
+    box.replaceChildren(head, ...hunt.feed.slice(-4).reverse().map((f) => {
+      const row = document.createElement("span");
+      if (!f.ok) row.className = "miss";
+      row.textContent = f.kind === "duel" ? (f.ok ? `${f.nick} 님이 듀얼에서 이겨 ${f.target} 님의 ${eul(f.prize)} 가져갔다!` : `${f.target} 님이 ${f.nick} 님의 듀얼을 막아냈다!`)
+        : f.kind === "love" ? `${f.nick} 님이 짬뽕순두부의 사랑으로 ${eul(f.prize)} 받았다!`
+        : f.ok ? `${f.nick} 님이 ${eul(f.prize + "몬")} 잡았다!` : `${f.nick} 님 앞에서 ${f.prize}몬이 도망갔다!`;
+      return row;
+    }));
+  }
+  function applyHunt(d) {
+    if (d.hunt) hunt = d.hunt;
+    // 테스트 모드는 서버에 기록이 없으므로 쓴 볼 수를 여기서 센다.
+    if (d.ok && trainer) Object.assign(trainer, { nick: d.nick, used: d.test ? trainer.used : d.used, prize: d.prize, duelUsed: d.duelUsed, test: !!d.test });
+    paintHunt();
+  }
+  let signing = false;
+  async function signTrainer(email, quiet) {
+    if (signing) return;
+    signing = true; $("hunt-go").disabled = true;
+    const say = (text) => { if (!quiet) $("hunt-msg").textContent = text; }; // 안내판을 다시 그려도 지워지지 않는 칸에 적는다
+    say("확인 중…");
+    try {
+      const d = await api({ action: "trainer", email });
+      if (!d.ok) {
+        try { localStorage.removeItem(TRAINER_KEY); } catch {}
+        say(d.error === "waiting" ? "대기 명단은 경품몬을 잡을 수 없습니다. 운영진에게 문의해 주세요."
+          : d.error === "absent" ? "불참으로 등록된 분은 경품몬을 잡을 수 없습니다."
+          : "이 이메일로 접수한 기록이 없습니다. 접수할 때 쓴 이메일을 확인해 주세요.");
+        return;
+      }
+      trainer = { email, nick: d.nick, used: d.used, prize: d.prize, duelUsed: d.duelUsed, test: !!d.test };
+      $("hunt-msg").textContent = "";
+      try { localStorage.setItem(TRAINER_KEY, email); } catch {}
+      huntHinted = false;
+      if (me !== d.nick) { me = d.nick; store.set(me); loadPeople(); }
+      applyHunt(d);
+    } catch (err) {
+      say("연결이 잠시 끊겼습니다. 다시 눌러 주세요.");
+    } finally {
+      signing = false; $("hunt-go").disabled = false;
+    }
+  }
+  $("hunt-form").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const email = $("hunt-email").value.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { $("hunt-msg").textContent = "이메일 주소를 확인해 주세요."; return; }
+    signTrainer(email);
+  });
+
+  // 수풀 칸에 발을 디딜 때마다 부른다.
+  function onStep() {
+    if (scene !== "town" || map[player.y][player.x] !== "H" || !hunt || !hunt.open || dialog || battle) return;
+    const hint = (lines) => { if (!huntHinted) { huntHinted = true; held = []; openDialog(lines); } };
+    if (!trainer) return hint([["", "수풀이 부스럭거린다. 경품몬의 기척이다!"], ["", "경품몬은 접수한 트레이너만 잡을 수 있다. 화면 아래 「트레이너 인증」에 접수할 때 쓴 이메일을 적자."]]);
+    if (trainer.prize) return hint([["", `이미 「${trainer.prize}」${eul(trainer.prize).slice(trainer.prize.length)} 갖고 있다. 남은 경품몬은 다른 트레이너 몫으로 두자.`]]);
+    if (!huntLeft()) return hint(loveLines("수풀이 조용하다. 경품몬은 모두 주인을 찾아갔다."));
+    if (!ballsLeft()) return hint(loveLines("볼을 다 썼다."));
+    if (Math.random() < 0.22) {
+      let r = Math.random() * huntLeft(); // 남은 수량에 비례해 고른다
+      startBattle(hunt.prizes.find((p) => p.left > 0 && (r -= p.left) < 0) || hunt.prizes.find((p) => p.left > 0));
+    }
+  }
+  function startBattle(p) {
+    held = [];
+    const b = battle = { p, phase: "intro", t0: performance.now(), sel: 0, res: null, opts: [] };
+    music.blip(660);
+    openDialog([["", `앗! 야생의 ${p.name}몬이 나타났다!`]], () => { b.phase = "menu"; b.opts = [`볼 던지기 (남은 볼 ${ballsLeft()}개)`, "도망가기"]; });
+  }
+  // 듀얼을 신청할 수 있으면 상대의 경품 정보를, 못 하면 그 이유(문장)를, 듀얼과 무관하면 null을 돌려준다.
+  function duelWith(npc) {
+    if (!duelOpen() || !npc.data || !trainer || !trainer.prize) return null;
+    const h = holderOf(npc.nick);
+    if (!h || h.nick === trainer.nick) return null;
+    if (trainer.duelUsed) return `${h.nick} 님은 「${h.prize}」${eul(h.prize).slice(h.prize.length)} 갖고 있다. 하지만 도전권은 이미 썼다.`;
+    if (h.shield) return `${h.nick} 님은 방어에 성공해 보호받고 있다.`;
+    if (h.prize === trainer.prize) return `${h.nick} 님도 「${h.prize}」${eul(h.prize).slice(h.prize.length)} 갖고 있다. 바꿀 것이 없다.`;
+    return h;
+  }
+  function startDuel(h, npc) {
+    held = [];
+    battle = { duel: h, look: npc.look, phase: "menu", step: "ask", t0: performance.now(), sel: 0, res: null,
+      opts: [`듀얼 신청 (내 ${trainer.prize} ↔ ${h.prize})`, "그만둔다"] };
+    music.blip(660);
+  }
+  function endBattle() {
+    battle = null; huntHinted = false;
+    if (trainer && trainer.test && (trainer.prize || !ballsLeft())) Object.assign(trainer, { prize: null, used: 0 }); // 테스트 모드는 경품을 받거나 볼을 다 쓰면 처음부터
+    paintHunt();
+  }
+  function battleNav(dir) {
+    if (battle.phase !== "menu") return;
+    const n = battle.opts.length;
+    battle.sel = (battle.sel + (dir === "up" || dir === "left" ? n - 1 : 1)) % n;
+    music.blip(880);
+  }
+  function battleAct() {
+    const b = battle;
+    if (b.phase !== "menu") return;
+    const send = (body) => { b.t0 = performance.now(); b.res = null; api(body).then((d) => { b.res = d; }, () => { b.res = { ok: false }; }); };
+    if (b.duel) {
+      if (b.step === "ask") {
+        if (b.sel) return endBattle();
+        b.step = "hand"; b.opts = ["가위", "바위", "보"]; b.sel = 0;
+        return;
+      }
+      b.hand = ["scissors", "rock", "paper"][b.sel]; b.phase = "shake";
+      return send({ action: "duel", email: trainer.email, target: b.duel.nick, hand: b.hand });
+    }
+    if (b.sel) { b.phase = "back"; return openDialog([["", "무사히 도망쳤다!"]], endBattle); }
+    b.phase = "throw";
+    send({ action: "throw", email: trainer.email, prize: b.p.name });
+  }
+  function updateBattle() {
+    const b = battle, t = performance.now() - b.t0;
+    if (b.phase === "throw" && t >= 650) { b.phase = "shake"; b.t0 = performance.now(); music.blip(520); }
+    else if (b.phase === "shake" && b.res && t >= (b.duel ? 1800 : 2100)) (b.duel ? resolveDuel : resolveThrow)();
+  }
+  const lostLink = (what) => () => openDialog([["", "연결이 잠시 끊겼다."], ["", `${what} 화면 아래 안내판에서 확인하자.`]], () => { const email = trainer.email; endBattle(); signTrainer(email, true); });
+  // 볼이 세 번 흔들린 뒤 서버 답을 보여 준다.
+  function resolveThrow() {
+    const b = battle, d = b.res, mon = b.p.name + "몬";
+    b.t0 = performance.now(); b.phase = "back";
+    if (!d.ok) return lostLink("볼이 줄었는지는")();
+    if (d.test && (d.result === "caught" || d.result === "fled")) {
+      trainer.used++;
+      if (d.result === "fled" && trainer.used >= hunt.balls) { // 실제라면 서버가 골라 주는 「짬뽕순두부의 사랑」을 흉내 낸다
+        const rest = d.hunt.prizes.filter((p) => p.left > 0);
+        d.love = rest.length ? rest[Math.floor(Math.random() * rest.length)].name : null;
+        d.prize = d.love;
+      }
+    }
+    applyHunt(d);
+    const lines = {
+      caught: [["", `신난다! ${eul(mon)} 잡았다!`], ["", `경품 「${b.p.name}」 획득! 마무리 시간에 운영진에게 화면 아래 안내판을 보여 주자.`]],
+      fled: [["", `앗! ${mon}이 볼에서 튀어나왔다!`], ["", "경품이 도망갔다!"]],
+      gone: [["", `${mon}은 한발 먼저 다른 트레이너가 데려갔다!`], ["", "볼은 쓰지 않았다."]],
+      closed: [["", "경품몬 잡기가 닫혔다. 볼이 힘없이 굴러 돌아왔다."]],
+      done: [["", "이미 경품을 갖고 있다. 볼은 쓰지 않았다."]],
+      noballs: [["", "주머니에 볼이 없다!"]],
+    }[d.result] || [["", "볼이 힘없이 굴러 돌아왔다."]];
+    if (d.result === "fled" && ballsLeft()) lines.push(["", `남은 볼은 ${ballsLeft()}개. 수풀을 더 걸어 보자.`]);
+    else if (d.result === "fled" || d.result === "noballs") lines.push(...loveLines("볼을 다 썼다.", d.love));
+    if (d.result === "fled" && d.love) lines.push(["", "마무리 시간에 운영진에게 화면 아래 안내판을 보여 주자."]);
+    b.phase = d.result === "caught" ? "caught" : d.result === "fled" || d.result === "gone" ? "fled" : "back";
+    music.blip(d.result === "caught" ? 1320 : 330);
+    openDialog(lines, endBattle);
+  }
+  function resolveDuel() {
+    const b = battle, d = b.res, who = b.duel.nick;
+    b.t0 = performance.now(); b.phase = "back";
+    if (!d.ok) return lostLink("듀얼이 성립했는지는")();
+    applyHunt(d);
+    b.their = d.their || null;
+    const hands = d.their ? [["", `나는 ${HAND_NAME[d.hand]}, ${who} 님은 ${HAND_NAME[d.their]}!`]] : [];
+    const lines = {
+      win: [...hands, ["", `이겼다! 「${d.gave}」${eul(d.gave || "").slice((d.gave || "").length)} 건네고 「${d.gained}」${eul(d.gained || "").slice((d.gained || "").length)} 받아 왔다!`]],
+      draw: [...hands, ["", `비겼다! 비기면 방어 성공이다. ${who} 님이 경품을 지켜 냈다.`]],
+      lose: [...hands, ["", `졌다… ${who} 님이 경품을 지켜 냈다.`]],
+      closed: [["", "듀얼 타임이 끝났다."]],
+      used: [["", "도전권은 이미 썼다."]],
+      shield: [["", `한발 늦었다. ${who} 님은 방어에 성공해 보호받고 있다.`]],
+      same: [["", "서로 같은 경품이라 바꿀 것이 없다."]],
+      targetnone: [["", `${who} 님은 지금 경품이 없다.`]],
+      noprize: [["", "경품이 없으면 듀얼을 신청할 수 없다."]],
+    }[d.result] || [["", "듀얼이 성립하지 않았다."]];
+    music.blip(d.result === "win" ? 1320 : 330);
+    openDialog(lines, endBattle);
+  }
+  function renderBattle(now) {
+    const b = battle, t = now - b.t0, W = cv.width, H = cv.height;
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "#bfe3f5"; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#8fd468"; ctx.fillRect(0, H * 0.4, W, H * 0.6);
+    const u = Math.max(2, Math.floor(Math.min(W * 0.26, H * 0.42) / 16)), size = 16 * u; // u: 몬스터 한 픽셀의 크기
+    ctx.fillStyle = "#7ccd52";
+    for (let y = H * 0.4; y < H; y += 6 * u) ctx.fillRect(0, y, W, 2 * u);
+    const mx = Math.round(W * 0.7), my = Math.round(H * 0.5), px = Math.round(W * 0.24), py = Math.round(H * 0.76);
+    const pad = (x, y) => { ctx.fillStyle = "#6dbb48"; ctx.beginPath(); ctx.ellipse(x, y, size * 0.8, size * 0.2, 0, 0, Math.PI * 2); ctx.fill(); };
+    pad(mx, my); pad(px, py);
+    ctx.drawImage(sprite(player.look, "up", 0), px - size / 2, py - size, size, size);
+    const bob = reduced ? 0 : Math.round(Math.sin(now / 300)) * u;
+    const fs = Math.round(13 * dpr), box = (x, y, w, h) => {
+      ctx.fillStyle = "#16161a"; ctx.fillRect(x - 2 * dpr, y - 2 * dpr, w + 4 * dpr, h + 4 * dpr);
+      ctx.fillStyle = "#fbfaf5"; ctx.fillRect(x, y, w, h);
+    };
+    const bold = `700 ${fs}px "Noto Sans KR", sans-serif`;
+    ctx.textBaseline = "middle";
+    if (b.duel) {
+      // 듀얼: 상대와 내가 각자 경품몬을 곁에 두고 마주 선다.
+      ctx.drawImage(sprite(b.look, "down", 0), mx - size / 2, my - size, size, size);
+      const half = size / 2, mine = trainer.prize || "", foe = (holderOf(b.duel.nick) || b.duel).prize; // 맞바꾼 뒤에는 바뀐 경품을 보여 준다
+      ctx.drawImage(monArt(prizeLook(foe), foe), mx - size * 1.1, my - half + bob, half, half);
+      ctx.drawImage(monArt(prizeLook(mine), mine), px + size * 0.6, py - half - bob, half, half);
+      const bubble = (text, x, y) => {
+        ctx.font = bold; ctx.textAlign = "center";
+        const w = ctx.measureText(text).width + fs * 1.2;
+        box(x - w / 2, y - fs, w, fs * 2);
+        ctx.fillStyle = "#16161a"; ctx.fillText(text, x, y + dpr * 0.5);
+      };
+      if (b.phase === "shake") bubble(["가위…", "가위… 바위…", "가위… 바위… 보!"][Math.min(2, Math.floor(t / 550))], W / 2, H * 0.3);
+      else if (b.their) { bubble(HAND_NAME[b.their], mx, my - size - fs * 1.4); bubble(HAND_NAME[b.hand], px, py - size - fs * 1.4); }
+    } else {
+      // 경품몬: 던진 볼이 닿으면 사라지고, 놓치면 옆으로 달아난다.
+      const inBall = b.phase === "shake" || b.phase === "caught" || (b.phase === "throw" && t > 560);
+      const flee = b.phase === "fled" ? Math.max(0, t - 350) / 500 : 0;
+      if (!inBall && flee < 1) {
+        ctx.globalAlpha = 1 - flee;
+        ctx.drawImage(monArt(b.p.look, b.p.name), mx - size / 2 + flee * W * 0.4, my - size + bob, size, size);
+        ctx.globalAlpha = 1;
+      }
+      const bw = 8 * u, bh = 7 * u;
+      if (b.phase === "throw") {
+        const k = Math.min(1, t / 650), x0 = px + size * 0.3, y0 = py - size * 0.8;
+        ctx.drawImage(ballArt, x0 + (mx - bw / 2 - x0) * k, y0 + (my - size * 0.6 - y0) * k - Math.sin(Math.PI * k) * H * 0.22, bw, bh);
+      } else if (b.phase === "shake" || b.phase === "caught") {
+        const c = t % 700, rock = b.phase === "shake" && !reduced && c < 320 ? Math.round(Math.sin(c / 50) * 2) * u : 0;
+        ctx.drawImage(ballArt, mx - bw / 2 + rock, my - bh, bw, bh);
+        if (b.phase === "caught" && t < 900) { // 별이 튄다
+          ctx.fillStyle = "#ffd23a";
+          [[-1, -1], [0, -1.4], [1, -1]].forEach(([dx, dy]) => {
+            const sx = mx + dx * size * (0.25 + t / 1800), sy = my - bh + dy * size * (0.15 + t / 2200);
+            ctx.fillRect(sx - 1.5 * u, sy - 0.5 * u, 3 * u, u); ctx.fillRect(sx - 0.5 * u, sy - 1.5 * u, u, 3 * u);
+          });
+        }
+      }
+      if (b.phase === "intro" && t < 450 && !reduced && Math.floor(t / 75) % 2) { ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.fillRect(0, 0, W, H); }
+    }
+    // 이름표와 선택지
+    const small = `500 ${Math.round(fs * 0.85)}px "Noto Sans KR", sans-serif`;
+    const title = b.duel ? b.duel.nick : b.p.name + "몬", sub = b.duel ? `경품 「${(holderOf(b.duel.nick) || b.duel).prize}」` : `남은 ${b.p.left}마리 · 포획률 ${b.p.rate}%`;
+    ctx.textAlign = "left";
+    ctx.font = small; const sw = ctx.measureText(sub).width;
+    ctx.font = bold;
+    const nw = Math.max(ctx.measureText(title).width, sw) + fs * 1.4, nx = fs, ny = H * 0.2;
+    box(nx, ny, nw, fs * 3.3);
+    ctx.fillStyle = "#16161a"; ctx.fillText(title, nx + fs * 0.7, ny + fs);
+    ctx.font = small; ctx.fillStyle = "#d6401a"; ctx.fillText(sub, nx + fs * 0.7, ny + fs * 2.35);
+    if (b.phase === "menu") {
+      ctx.font = bold;
+      const mw = Math.min(W - fs * 2, Math.max(...b.opts.map((o) => ctx.measureText(o).width)) + fs * 3), mh = fs * (0.8 + b.opts.length * 1.7), bx = W - mw - fs, by = H - mh - fs;
+      box(bx, by, mw, mh);
+      b.opts.forEach((o, i) => {
+        ctx.fillStyle = i === b.sel ? "#d6401a" : "#16161a";
+        ctx.fillText((i === b.sel ? "▶ " : "　 ") + o, bx + fs * 0.7, by + fs * (1.25 + i * 1.7), mw - fs * 1.4);
+      });
+    }
+  }
+
   // ───── Game loop ─────
   const game = $("game"), cv = $("cv"), ctx = cv.getContext("2d");
   let scale = 3, dpr = 1, active = false, held = [], dialog = null;
@@ -1207,8 +1586,9 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
 
   function update(dt) {
     for (const e of all()) {
-      if (e.moving) { e.t = Math.min(1, e.t + dt / e.ms); if (e.t >= 1) e.moving = false; }
+      if (e.moving) { e.t = Math.min(1, e.t + dt / e.ms); if (e.t >= 1) { e.moving = false; if (e === player) onStep(); } }
     }
+    if (battle) return updateBattle();
     if (scene === "hall" && !player.moving && map[player.y][player.x] === "E") return leaveHall();
     if (!dialog && !player.moving && held.length) tryMove(player, held[held.length - 1], 170);
     for (const n of npcs) {
@@ -1250,6 +1630,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   if (seatedNow()) showHall(); // 전날부터는 주민들이 앉아 있는 세미나실에서 시작한다
 
   function render(now) {
+    if (battle) return renderBattle(now);
     const s = scale;
     const vw = cv.width / s, vh = cv.height / s;
     const [ppx, ppy] = pos(player);
@@ -1380,7 +1761,8 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const tagged = ents.filter((o) => o.e.kind !== "ticket" && (!o.e.seated || (standby ? featured && o.e.nick === featured.nick : far(o) <= 4)));
     for (const { e, p } of tagged.sort((a, b) => far(a) - far(b))) {
       const lift = e.kind === "absent" ? 18 : e.kind === "statue" ? 11 : SPONSORS.has(e.nick) ? 6 : 5;
-      const label = e.kind === "talk" ? "🎤 " + e.nick : e.kind === "absent" ? e.nick + " · 불참" : e.kind === "statue" ? e.nick + " 님 동상" : e.nick;
+      const label = e.kind === "talk" ? "🎤 " + e.nick : e.kind === "absent" ? e.nick + " · 불참" : e.kind === "statue" ? e.nick + " 님 동상"
+        : e.nick + (duelOpen() && e.data && holderOf(e.nick) ? " · " + holderOf(e.nick).prize : "");
       const spot = standby && e.seated;
       const bg = spot || e.kind === "me" ? "#ffe14a" : e.kind === "talk" ? "#ff4a1c" : e.kind === "staff" ? "#2f6fe4" : e.kind === "absent" ? "#4a2e17" : e.kind === "nikke" ? "#d6336c" : e.kind === "statue" ? "#8a6510" : "rgba(16,16,22,0.78)";
       tag(label, p[0], p[1], lift, bg, spot || e.kind === "me" || e.kind === "talk" ? "#111" : "#fff", e.seated && !standby);
@@ -1546,6 +1928,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   function act() {
     music.blip();
     if (dialog) return advance();
+    if (battle) return battleAct();
     if (player.moving) return;
     const [dx, dy] = DIRS[player.dir];
     const tx = player.x + dx, ty = player.y + dy;
@@ -1553,7 +1936,11 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     if (npc && npc.say) {
       const prevDir = npc.dir;
       npc.dir = OPP[player.dir]; npc.talking = true;
-      return openDialog(npc.say(), () => { npc.talking = false; if (npc.still) npc.dir = prevDir; });
+      // 듀얼 타임에는 경품을 가진 주민의 대사 끝에 듀얼 신청이 붙는다.
+      const duel = duelWith(npc), lines = npc.say();
+      if (typeof duel === "string") lines.push(["", duel]);
+      else if (duel) lines.push(["", `${npc.nick} 님은 「${duel.prize}」${eul(duel.prize).slice(duel.prize.length)} 갖고 있다. 가위바위보에서 이기면 내 경품과 맞바꾼다!`]);
+      return openDialog(lines, () => { npc.talking = false; if (npc.still) npc.dir = prevDir; if (duel && typeof duel === "object") startDuel(duel, npc); });
     }
     const t = map[ty] && map[ty][tx];
     if (t === "S" && SIGNS[`${tx},${ty}`]) return openDialog(SIGNS[`${tx},${ty}`]());
@@ -1587,13 +1974,13 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     const c = codeOf(ev);
     if (c === "Escape") { game.blur(); return; }
     const d = KEYS[c];
-    if (d) { ev.preventDefault(); if (!held.includes(d)) held.push(d); return; }
+    if (d) { ev.preventDefault(); if (battle) { if (!ev.repeat && !dialog) battleNav(d); } else if (!held.includes(d)) held.push(d); return; }
     if (ACT.includes(c)) { ev.preventDefault(); if (!ev.repeat) act(); }
   });
   game.addEventListener("keyup", (ev) => { const d = KEYS[codeOf(ev)]; if (d) held = held.filter((h) => h !== d); });
   document.querySelectorAll(".dpad button").forEach((b) => {
     const d = b.dataset.dir;
-    const down = (ev) => { ev.preventDefault(); if (!active) enter(); if (!held.includes(d)) held.push(d); };
+    const down = (ev) => { ev.preventDefault(); if (!active) enter(); if (battle) { if (!dialog) battleNav(d); } else if (!held.includes(d)) held.push(d); };
     const up = () => { held = held.filter((h) => h !== d); };
     b.addEventListener("pointerdown", down);
     ["pointerup", "pointerleave", "pointercancel"].forEach((t) => b.addEventListener(t, up));
@@ -1636,6 +2023,16 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       seatsLeft = Math.max(0, CAPACITY - total);
       syncPeople(data.people || [], data.absent || []);
       renderTalks(); renderCounts();
+      hunt = data.hunt || null;
+      if (hunt && trainer && trainer.test) hunt.open = true; // 테스트 모드는 닫혀 있어도 수풀이 열린다
+      const mine = trainer && holderOf(trainer.nick); // 듀얼로 내 경품이 바뀌었으면 따라간다
+      if (mine) trainer.prize = mine.prize;
+      paintHunt();
+      if (hunt && !trainer && !standby) { // 전에 인증한 이메일이 있으면 이어서 쓴다
+        let saved = "";
+        try { saved = localStorage.getItem(TRAINER_KEY) || ""; } catch {}
+        if (saved) signTrainer(saved, true);
+      }
     } catch (err) { /* 다음 주기에 다시 시도 */ }
   }
   renderCounts();
@@ -1671,6 +2068,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
       $("sb-t").textContent = people.filter((p) => p.type === "talk").length;
     };
     tick(); setInterval(tick, 1000);
+    setInterval(() => { if (hunt && (hunt.open || duelOpen())) loadPeople(); }, 8000); // 포획·듀얼 소식은 자주 받아 온다
     let queue = [];
     const introduce = () => {
       if (!people.length) return;

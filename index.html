@@ -444,7 +444,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   <dl class="wrap facts">
     <div><dt class="mono">Date</dt><dd><span class="big">11.29</span><small>2026 · 일요일</small></dd></div>
     <div><dt class="mono">Start</dt><dd><span class="big">12:00</span><small>18:00까지 · 이후 2차</small></dd></div>
-    <div><dt class="mono">Place</dt><dd><span class="big kr">영등포</span><small>영등포역 인근 · 장소 확정 전</small></dd></div>
+    <div><dt class="mono">Place</dt><dd><span class="big kr">이즈플레이 2호점</span><small>영등포역 인근 · <a href="https://map.naver.com/p/search/%EC%9D%B4%EC%A6%88%ED%94%8C%EB%A0%88%EC%9D%B4%202%ED%98%B8%EC%A0%90" target="_blank" rel="noopener">네이버지도 ↗</a></small></dd></div>
     <div><dt class="mono">Seats</dt><dd><span class="big" id="seats">30</span><small id="seats-note">명 내외 · 피자와 음료 제공</small></dd></div>
   </dl>
 
@@ -646,7 +646,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     <p class="outro">See you<br>on <span>11.29</span></p>
     <div class="foot">
       <span><b>운영</b> 짬뽕순두부(방장) · Tiny(부방장)</span>
-      <span>일정·장소·금액은 예정이며 확정되는 대로 갱신합니다.</span>
+      <span>변경 사항이 생기면 바로 갱신합니다.</span>
       <span><a href="?standby">프로젝터 대기 화면</a></span>
     </div>
   </div>
@@ -658,7 +658,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   <aside class="sb-panel">
     <p class="mono sb-meta"><span>PGR21</span><span>AI Seminar</span><span>Vol.04</span></p>
     <p class="sb-title">Generation<br><span class="out">is</span> <span class="acc">Done.</span></p>
-    <p class="sb-sub">제4회 PGR21 AI 세미나 · 11.29 일요일 12:00 · 영등포</p>
+    <p class="sb-sub">제4회 PGR21 AI 세미나 · 11.29 일요일 12:00 · 영등포 이즈플레이 2호점</p>
     <p class="sb-clock"><b id="sb-clock">--:--</b><span id="sb-status"></span></p>
     <div class="sb-quote swap" id="sb-quote"><span class="sb-who" id="sb-who"></span><p id="sb-line"></p><small id="sb-talk"></small></div>
     <p class="sb-foot"><span>참가 <b id="sb-n">0</b>명 · 발표 <b id="sb-t">0</b>개</span><span id="sb-sponsors"></span></p>
@@ -706,7 +706,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
 
   // ───── Ticker ─────
-  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포", "Call for Speakers", "Sponsored by Psyki · 성야무인 · Tiny · 유주하리 · 연구의 괴로움", "PGR21 AI Seminar Vol.04"];
+  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포 이즈플레이 2호점", "Call for Speakers", "Sponsored by Psyki · 성야무인 · Tiny · 유주하리 · 연구의 괴로움", "PGR21 AI Seminar Vol.04"];
   const set = phrases.map((p) => `<span>${p}</span>`).join("");
   $("ticker").innerHTML = set + set + set + set;
 
@@ -1015,7 +1015,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   let people = [];
   let me = store.get();
   const SIGNS = {
-    "22,12": () => [["안내판", "GENERATION IS DONE"], ["안내판", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 12:00 · 영등포"]],
+    "22,12": () => [["안내판", "GENERATION IS DONE"], ["안내판", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 12:00 · 영등포 이즈플레이 2호점"]],
     "32,14": () => [["마을 게시판", `마을 주민 ${people.length}명 · 입주 심사 중 ${pending}명 · 정원 ${CAPACITY}명`], ["마을 게시판", ddayLine()], ["마을 게시판", "접수를 마치고 운영진 확인을 받으면 이 마을에 내 아바타가 입주한다고 적혀 있다."]],
     "13,12": () => [["ART 정원", "그림이 몇 초 만에 피어나는 곳."], ["ART 정원", "고르고 버리는 취향도 창작일까?"]],
     "15,22": () => [["DATA 호수", "분석은 한 줄 프롬프트가 됐다."], ["DATA 호수", "그럼 어떤 질문을 던질지는 누가 정하지?"]],
@@ -1559,7 +1559,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     if (t === "S" && SIGNS[`${tx},${ty}`]) return openDialog(SIGNS[`${tx},${ty}`]());
     if (t === "D") return enterHall();
     if (t === "A") return openDialog(talkGuide());
-    if (t === "K") return openDialog([["스크린", "GENERATION IS DONE"], ["스크린", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 12:00 · 영등포"]]);
+    if (t === "K") return openDialog([["스크린", "GENERATION IS DONE"], ["스크린", "제4회 PGR21 AI 세미나 · 2026년 11월 29일 일요일 12:00 · 영등포 이즈플레이 2호점"]]);
     if (t === "U") return openDialog([["", "연단이다. 마이크에서 「아, 아, 마이크 테스트」 소리가 남아 있는 것 같다."]]);
     if (t === "C") return openDialog([["", !seatedNow() ? "아직 아무도 앉지 않은 의자다. 29일에는 꽉 찰 것이다."
       : mySeat && mySeat[0] === tx && mySeat[1] === ty ? "의자에 내 이름표가 붙어 있다. 내 자리다." : "빈 의자다. 아직 주인이 없다."]]);

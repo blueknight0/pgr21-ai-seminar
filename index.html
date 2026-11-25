@@ -1245,7 +1245,14 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   const duelOpen = () => !!(hunt && hunt.duel && hunt.duel.open);
   const holderOf = (nick) => (hunt && hunt.duel ? hunt.duel.holders.find((h) => h.nick === nick) : null);
   const prizeLook = (name) => ((hunt && hunt.prizes.find((p) => p.name === name)) || {}).look;
-  const api = (body) => fetch(API, { method: "POST", body: JSON.stringify(body) }).then((r) => r.json());
+  // 서버가 붐벼 'busy'를 돌려주면(아무것도 기록되지 않은 상태) 잠깐 쉬었다가 알아서 다시 보낸다.
+  const api = async (body) => {
+    for (let i = 0; ; i++) {
+      const d = await fetch(API, { method: "POST", body: JSON.stringify(body) }).then((r) => r.json());
+      if (d.error !== "busy" || i >= 11) return d;
+      await new Promise((go) => setTimeout(go, 500 + Math.random() * 1500));
+    }
+  };
   // 볼을 다 쓴 사람에게 건네는 안내. 경품이 남아 있으면 그중 하나를 받고, 없으면 사랑만 받는다. 몬스터로는 나오지 않는다.
   const loveLines = (first, prize) => [["", first], ["", "빈손으로 돌아서려는데 누군가 어깨를 토닥인다."], ["짬뽕순두부", "괜찮아. 내 사랑을 줄게."],
     ["", prize ? `${trainer.nick} 님은 「짬뽕순두부의 사랑」으로 「${prize}」${eul(prize).slice(prize.length)} 받았다!` : `${trainer.nick} 님은 「짬뽕순두부의 사랑」(꽝)을 받았다!`]];

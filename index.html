@@ -451,7 +451,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   <div class="sponsor-bar">
     <div class="wrap sponsors" aria-label="후원">
       <span class="mono lab">Sponsors</span>
-      <div class="sp main"><span class="mono">후원</span><b>Psyki</b><b class="kr">성야무인</b><b>Tiny</b><b class="kr">유주하리</b><b class="kr">연구의 괴로움</b></div>
+      <div class="sp main"><span class="mono">후원</span><b>Psyki</b><b class="kr">성야무인</b><b>Tiny</b><b class="kr">유주하리</b><b class="kr">이슈타르</b><b class="kr">연구의 괴로움</b></div>
       <div class="sp open"><span class="mono">후원</span><b>모집중</b><small>방장에게 문의</small></div>
     </div>
   </div>
@@ -706,7 +706,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
   };
 
   // ───── Ticker ─────
-  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포 이즈플레이 2호점", "Call for Speakers", "Sponsored by Psyki · 성야무인 · Tiny · 유주하리 · 연구의 괴로움", "PGR21 AI Seminar Vol.04"];
+  const phrases = ["Generation is Done", "2026.11.29 SUN 12:00", "Data · Art · Game", "영등포 이즈플레이 2호점", "Call for Speakers", "Sponsored by Psyki · 성야무인 · Tiny · 유주하리 · 이슈타르 · 연구의 괴로움", "PGR21 AI Seminar Vol.04"];
   const set = phrases.map((p) => `<span>${p}</span>`).join("");
   $("ticker").innerHTML = set + set + set + set;
 
@@ -805,7 +805,7 @@ footer { padding-block: clamp(56px, 8vw, 112px) 40px; }
     },
   };
   // Sponsors wear a crown, drawn on top of the sprite so it sits on the head (sprite rows -1..2).
-  const SPONSORS = new Set(["Psyki", "성야무인", "Tiny", "유주하리"]);
+  const SPONSORS = new Set(["Psyki", "성야무인", "Tiny", "유주하리", "이슈타르"]);
   const CROWN = ["g..gg..g", "gg.gg.gg", "gggggggg", "dgrddrgd"];
   const CROWN_PAL = { g: "#ffd23a", d: "#c48a10", r: "#ff4a1c" };
 
